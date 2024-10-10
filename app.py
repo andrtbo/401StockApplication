@@ -17,3 +17,19 @@ app.config['WTF_CSRF_ENABLED'] = False
 @app.route("/")
 def dashboard():
     return render_template('dashboard.html')
+
+@app.route("/buy_stock") 
+def buy_stock():
+    return render_template('buy_stock.html')
+
+@app.route("/sell_stock")
+def sell_stock():
+    return render_template('sell_stock.html')
+
+@app.route("/portfolio")
+def portfolio():
+    return render_template('portfolio.html')
+
+@app.route("/login")
+def login():
+    return render_template('login.html')
