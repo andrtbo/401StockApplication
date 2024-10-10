@@ -8,25 +8,51 @@
         <!-- Card nav tabs-->
         <div class="card-header">
         <ul class="nav nav-tabs card-header-tabs w-100 justify-content-around">
-            <li class="nav-item active">
-                <!-- class = "active" determines which nav tab is selected for the page -->
-                <a class="nav-link active" href="{{ url_for('login') }}">Login</a>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('login') }}">Login</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('create_account') }}">Create Account</a>
+                <!-- class = "active" determines which nav tab is selected for the page -->
+                <a class="nav-link active" href="{{ url_for('create_account') }}">Create Account</a>
             </li>
         </ul>
         </div>
         <!-- Card content -->
         <div class="card-body">
         <form>
-
             <!-- Username field for form -->
             <p>
                 {{ form.username.label }}<br>
                 {{ form.username() }}<br>
         
                 {% for error in form.username.errors %}
+                <span style="color: red;">[{{ error }}]</span><br>
+                {% endfor %}
+            </p>
+            <!-- First name field for form -->
+            <p>
+                {{ form.first_name.label }}<br>
+                {{ form.first_name() }}<br>
+        
+                {% for error in form.first_name.errors %}
+                <span style="color: red;">[{{ error }}]</span><br>
+                {% endfor %}
+            </p>
+            <!-- Last name field for form -->
+            <p>
+                {{ form.last_name.label }}<br>
+                {{ form.last_name() }}<br>
+        
+                {% for error in form.last_name.errors %}
+                <span style="color: red;">[{{ error }}]</span><br>
+                {% endfor %}
+            </p>
+            <!-- Email field for form -->
+            <p>
+                {{ form.email.label }}<br>
+                {{ form.email() }}<br>
+        
+                {% for error in form.email.errors %}
                 <span style="color: red;">[{{ error }}]</span><br>
                 {% endfor %}
             </p>
