@@ -19,7 +19,8 @@
         </div>
         <!-- Card content -->
         <div class="card-body">
-        <form>
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
             <!-- Username field for form -->
             <p>
                 {{ form.username.label }}<br>

@@ -18,7 +18,7 @@ class User(db.Model):
     first_name = db.Column(db.String(20))
     last_name = db.Column(db.String(20))
     email = db.Column(db.String(100), unique = True, nullable = False)
-    password_hash = db.Column(db.String(255))
+    password = db.Column(db.String(255))
     admin = db.Column(db.Boolean)
 
 class Stock(db.Model):
@@ -56,26 +56,33 @@ def dashboard():
     db.create_all()
     return render_template('dashboard.html')
 
-@app.route("/buy_stock") 
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    form = UserForm()
+
+    return render_template('login.html', form=form)
+
+@app.route("/create-account", methods=["GET", "POST"])
+def create_account():
+    form = UserForm()
+    
+    if form.validate_on_submit():
+        new_user = User(username = form.username.data, first_name = form.first_name.data, last_name = form.last_name.data, email = form.email.data, password = form.password.data, admin = False)
+        db.session.add(new_user)
+        #db.session.commit()
+        flash('Account created successfully!')
+        return redirect(url_for('login'))
+    
+    return render_template('create_account.html', form=form)
+
+@app.route("/buy_stock", methods=["GET", "POST"]) 
 def buy_stock():
     return render_template('buy_stock.html')
 
-@app.route("/sell_stock")
+@app.route("/sell_stock", methods=["GET", "POST"])
 def sell_stock():
     return render_template('sell_stock.html')
 
 @app.route("/portfolio")
 def portfolio():
     return render_template('portfolio.html')
-
-@app.route("/login")
-def login():
-    form = UserForm()
-
-    return render_template('login.html', form=form)
-
-@app.route("/create-account")
-def create_account():
-    form = UserForm()
-    
-    return render_template('create_account.html', form=form)
