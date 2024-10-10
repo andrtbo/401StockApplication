@@ -17,23 +17,22 @@
                 {% endfor %}
             {% endif %}
             {% endwith %}
-        </ul>
+        </ul>    
 
-        <!-- Card nav tabs-->
         <ul class="nav nav-tabs card-header-tabs w-100 justify-content-around">
-            <li class="nav-item active">
-                <!-- class = "active" determines which nav tab is selected for the page -->
+            <li class="nav-item">
                 <a class="nav-link active" href="{{ url_for('login') }}">Login</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('create_account') }}">Create Account</a>
+                <!-- class = "active" determines which nav tab is selected for the page -->
+                <a class="nav-link " href="{{ url_for('create_account') }}">Create Account</a>
             </li>
         </ul>
         </div>
-        
         <!-- Card content -->
         <div class="card-body">
-        <form>
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
             <!-- Username field for form -->
             <p>
                 {{ form.username.label }}<br>

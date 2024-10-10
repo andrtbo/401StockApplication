@@ -43,12 +43,17 @@ class Transactions(db.Model):
     purchase_volume = db.Column(db.Integer)
 
 # Classes for forms
-class UserForm(FlaskForm): #Form with fields required for logging in
+class CreateForm(FlaskForm): #Form with fields required for logging in
     username = StringField('Username', validators=[DataRequired()])
     password = StringField('Password', validators=[DataRequired()])
     first_name = StringField('First Name', validators=[DataRequired()])
     last_name = StringField('Last Name', validators=[DataRequired()])
     email = StringField('Email Address', validators=[DataRequired(), Email()])
+    submit = SubmitField('Submit')
+
+class LoginForm(FlaskForm): #Form with fields required for logging in
+    username = StringField('Username', validators=[DataRequired()])
+    password = StringField('Password', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
 @app.route("/")
@@ -58,18 +63,27 @@ def dashboard():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    form = UserForm()
+    form = LoginForm()
+
+    if form.validate_on_submit():
+        account = User.query.filter_by(username = form.username.data).first()
+        
+        if account.password == form.password.data:
+            flash('Login successful')
+            return redirect(url_for('dashboard'))
+        else:
+            flash('Login unsuccessful')
 
     return render_template('login.html', form=form)
 
 @app.route("/create-account", methods=["GET", "POST"])
 def create_account():
-    form = UserForm()
+    form = CreateForm()
     
     if form.validate_on_submit():
         new_user = User(username = form.username.data, first_name = form.first_name.data, last_name = form.last_name.data, email = form.email.data, password = form.password.data, admin = False)
         db.session.add(new_user)
-        #db.session.commit()
+        db.session.commit()
         flash('Account created successfully!')
         return redirect(url_for('login'))
     

@@ -2,6 +2,17 @@
 
 {% block title%}Dashboard{% endblock %}
 
-{% block content%}Content{% endblock %}
+{% block content%}
+    <!-- List flashed messages -->
+    <ul class="list-group list-group-flush">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+            <li class="list-group-item" style="color: green;">{{ message }}</li>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+    </ul>
+{% endblock %}
 
 {% block footer%}Footer{% endblock %}
