@@ -56,13 +56,23 @@ class LoginForm(FlaskForm): #Form with fields required for logging in
     password = StringField('Password', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
+# Variables for logging in
+logged_in = False # Used to check if user is logged in. Change to "True" to access pages without logging in
+current_user = User() # User class to temporarily store user information
+
 @app.route("/")
 def dashboard():
-    db.create_all()
-    return render_template('dashboard.html')
+    global logged_in # Makes sure all functions are accessing/editing the same "logged_in" variable
+    if not logged_in: # I'd rather a function than using an if else for everything, but the redirect works weirdly otherwise
+        flash('Please log in before accessing stock trading services.')
+        return redirect(url_for('login'))
+    else:
+        return render_template('dashboard.html')
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    global current_user
+    global logged_in
     form = LoginForm()
 
     if form.validate_on_submit():
@@ -70,14 +80,27 @@ def login():
         
         if account.password == form.password.data:
             flash('Login successful')
+            
+            # Sets the user as logged in and modifies the "current_user" object
+            logged_in = True
+            current_user = User(username = account.username, first_name = account.first_name, last_name = account.last_name, email = account.email, password = account.password, admin = account.admin)
             return redirect(url_for('dashboard'))
         else:
             flash('Login unsuccessful')
 
     return render_template('login.html', form=form)
 
+@app.route("/logout")
+def logout():
+    global logged_in
+    global current_user
+    logged_in = False
+    current_user = User()
+    return redirect(url_for('login'))
+
 @app.route("/create-account", methods=["GET", "POST"])
 def create_account():
+    global logged_in
     form = CreateForm()
     
     if form.validate_on_submit():
@@ -91,12 +114,27 @@ def create_account():
 
 @app.route("/buy_stock", methods=["GET", "POST"]) 
 def buy_stock():
-    return render_template('buy_stock.html')
+    global logged_in
+    if not logged_in:
+        flash('Please log in before accessing stock trading services.')
+        return redirect(url_for('login'))
+    else:
+        return render_template('buy_stock.html')
 
 @app.route("/sell_stock", methods=["GET", "POST"])
 def sell_stock():
-    return render_template('sell_stock.html')
+    global logged_in
+    if not logged_in:
+        flash('Please log in before accessing stock trading services.')
+        return redirect(url_for('login'))
+    else:
+        return render_template('sell_stock.html')
 
 @app.route("/portfolio")
 def portfolio():
-    return render_template('portfolio.html')
+    global logged_in
+    if not logged_in:
+        flash('Please log in before accessing stock trading services.')
+        return redirect(url_for('login'))
+    else:
+        return render_template('portfolio.html')
