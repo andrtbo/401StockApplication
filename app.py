@@ -57,7 +57,7 @@ class LoginForm(FlaskForm): #Form with fields required for logging in
     submit = SubmitField('Submit')
 
 # Variables 
-logged_in = False # Used to check if user is logged in. Change to "True" to access pages without logging in
+logged_in = True # Used to check if user is logged in. Change to "True" to access pages without logging in
 current_user = User() # User class to temporarily store the logged in user info
 
 # Functions
