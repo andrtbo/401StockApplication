@@ -56,9 +56,25 @@ class LoginForm(FlaskForm): #Form with fields required for logging in
     password = StringField('Password', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
-# Variables for logging in
+# Variables 
 logged_in = False # Used to check if user is logged in. Change to "True" to access pages without logging in
-current_user = User() # User class to temporarily store user information
+current_user = User() # User class to temporarily store the logged in user info
+
+# Functions
+def test_unique(input_user): # Checks to see if a created account's username or password are unique 
+    try: 
+        test_user = User.query.filter_by(username = input_user.username).first()
+        if test_user.username == input_user.username:
+            flash("This username is already in use.")
+            return False
+    except AttributeError:
+        try:
+            test_user = User.query.filter_by(email = input_user.email).first()
+            if test_user.email == input_user.email:
+                flash("This email is already in use.")
+                return False
+        except AttributeError:
+            return True
 
 @app.route("/")
 def dashboard():
@@ -113,13 +129,19 @@ def create_account():
     global logged_in
 
     form = CreateForm()
-    
+
     if form.validate_on_submit():
+        # Creates a new_user object with form info
         new_user = User(username = form.username.data, first_name = form.first_name.data, last_name = form.last_name.data, email = form.email.data, password = form.password.data, admin = False)
-        db.session.add(new_user)
-        db.session.commit()
-        flash('Account created successfully!')
-        return redirect(url_for('login'))
+        
+        uniqueness = test_unique(new_user) # Returns True only if the username and password aren't in the database already
+
+        if uniqueness == True: 
+            # Puts the new user into the database
+            db.session.add(new_user)
+            db.session.commit()
+            flash('Account created successfully!')
+            return redirect(url_for('login'))
     
     return render_template('create_account.html', form=form)
 
