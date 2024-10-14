@@ -63,6 +63,7 @@ current_user = User() # User class to temporarily store user information
 @app.route("/")
 def dashboard():
     global logged_in # Makes sure all functions are accessing/editing the same "logged_in" variable
+
     if not logged_in: # I'd rather a function than using an if else for everything, but the redirect works weirdly otherwise
         flash('Please log in before accessing stock trading services.')
         return redirect(url_for('login'))
@@ -75,18 +76,24 @@ def login():
     global logged_in
     form = LoginForm()
 
+    # What gets done when the current user submits
     if form.validate_on_submit():
+        # Queries the information for the account with the specified username
         account = User.query.filter_by(username = form.username.data).first()
         
-        if account.password == form.password.data:
-            flash('Login successful')
-            
-            # Sets the user as logged in and modifies the "current_user" object
-            logged_in = True
-            current_user = User(username = account.username, first_name = account.first_name, last_name = account.last_name, email = account.email, password = account.password, admin = account.admin)
-            return redirect(url_for('dashboard'))
-        else:
-            flash('Login unsuccessful')
+        try:
+            # Checks if the form password matches the attempted account's password
+            if account.password == form.password.data:
+                flash('Login successful')
+                
+                # Sets the user as logged in and modifies the "current_user" object
+                logged_in = True
+                current_user = User(username = account.username, first_name = account.first_name, last_name = account.last_name, email = account.email, password = account.password, admin = account.admin)
+                return redirect(url_for('dashboard'))
+            else: 
+                flash('The username or password is incorrect.')
+        except AttributeError: # Flashes this message when an incorrect password causes an AttributeError
+            flash('The username or password is incorrect.')
 
     return render_template('login.html', form=form)
 
@@ -94,13 +101,17 @@ def login():
 def logout():
     global logged_in
     global current_user
+
+    # Sets the logged_in variable to false and makes the current_user variable blank
     logged_in = False
     current_user = User()
+
     return redirect(url_for('login'))
 
 @app.route("/create-account", methods=["GET", "POST"])
 def create_account():
     global logged_in
+
     form = CreateForm()
     
     if form.validate_on_submit():
@@ -115,6 +126,8 @@ def create_account():
 @app.route("/buy_stock", methods=["GET", "POST"]) 
 def buy_stock():
     global logged_in
+
+    # Return to the login page if not logged in
     if not logged_in:
         flash('Please log in before accessing stock trading services.')
         return redirect(url_for('login'))
@@ -124,6 +137,8 @@ def buy_stock():
 @app.route("/sell_stock", methods=["GET", "POST"])
 def sell_stock():
     global logged_in
+
+    # Return to the login page if not logged in
     if not logged_in:
         flash('Please log in before accessing stock trading services.')
         return redirect(url_for('login'))
@@ -133,6 +148,8 @@ def sell_stock():
 @app.route("/portfolio")
 def portfolio():
     global logged_in
+
+    # Return to the login page if not logged in
     if not logged_in:
         flash('Please log in before accessing stock trading services.')
         return redirect(url_for('login'))
