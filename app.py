@@ -79,16 +79,16 @@ def login():
     # What gets done when the current user submits
     if form.validate_on_submit():
         # Queries the information for the account with the specified username
-        account = User.query.filter_by(username = form.username.data).first()
+        login_account = User.query.filter_by(username = form.username.data).first()
         
         try:
             # Checks if the form password matches the attempted account's password
-            if account.password == form.password.data:
+            if login_account.password == form.password.data:
                 flash('Login successful')
                 
                 # Sets the user as logged in and modifies the "current_user" object
                 logged_in = True
-                current_user = User(username = account.username, first_name = account.first_name, last_name = account.last_name, email = account.email, password = account.password, admin = account.admin)
+                current_user = User(username = login_account.username, first_name = login_account.first_name, last_name = login_account.last_name, email = login_account.email, password = login_account.password, admin = login_account.admin)
                 return redirect(url_for('dashboard'))
             else: 
                 flash('The username or password is incorrect.')
