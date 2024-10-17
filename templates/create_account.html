@@ -7,18 +7,6 @@
     <div class="card mx-auto" style="width: 50rem;">
         <!-- Card nav tabs-->
         <div class="card-header">
-
-        <!-- List group for flashed messages -->
-        <ul class="list-group list-group-flush">
-            {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                {% for message in messages %}
-                <li class="list-group-item" style="color: green;">{{ message }}</li>
-                {% endfor %}
-            {% endif %}
-            {% endwith %}
-        </ul>
-        
         <ul class="nav nav-tabs card-header-tabs w-100 justify-content-around">
             <li class="nav-item">
                 <a class="nav-link" href="{{ url_for('login') }}">Login</a>
