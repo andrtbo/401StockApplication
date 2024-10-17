@@ -56,6 +56,17 @@ class LoginForm(FlaskForm): #Form with fields required for logging in
     password = StringField('Password', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
+<<<<<<< Updated upstream
+=======
+class StockForm(FlaskForm): #Form to add the stock to DB
+    stock_ticker = StringField('Stock Ticker', validators=[DataRequired()])
+    company_name = StringField('Company Name', validators=[DataRequired()])
+    market_price = FloatField('Market Price', validators=[DataRequired()])
+    volume_owned = IntegerField('Volume Owned', validators=[DataRequired()])
+    market_volume = IntegerField('Market Volume', validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
+>>>>>>> Stashed changes
 # Variables 
 logged_in = True # Used to check if user is logged in. Change to "True" to access pages without logging in
 current_user = User() # User class to temporarily store the logged in user info
