@@ -1,0 +1,88 @@
+{% extends './base.html' %}
+
+{% block title%}Create a Stock{% endblock %}
+
+{% block content%}
+    <!-- Login / Create Account card -->
+    <div class="card mx-auto" style="width: 50rem;">
+        <!-- Card nav tabs-->
+        <div class="card-header">
+
+        <!-- List group for flashed messages -->
+        <ul class="list-group list-group-flush">
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                <li class="list-group-item" style="color: green;">{{ message }}</li>
+                {% endfor %}
+            {% endif %}
+            {% endwith %}
+        </ul>
+        
+        <ul class="nav nav-tabs card-header-tabs w-100 justify-content-around">
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('create_stock') }}">Create Stock</a>
+            </li>
+            <li class="nav-item">
+                <!-- class = "active" determines which nav tab is selected for the page -->
+                <a class="nav-link active" href="{{ url_for('dashboard') }}">Return</a>
+            </li>
+        </ul>
+        </div>
+        <!-- Card content -->
+        <div class="card-body">
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            <!-- Stock Ticker field for form -->
+            <p>
+                {{ form.stock_ticker.label }}<br>
+                {{ form.stock_ticker() }}<br>
+        
+                {% for error in form.username.errors %}
+                <span style="color: red;">[{{ error }}]</span><br>
+                {% endfor %}
+            </p>
+            <!-- Comapny Name field for form -->
+            <p>
+                {{ form.company_name.label }}<br>
+                {{ form.company_name() }}<br>
+        
+                {% for error in form.first_name.errors %}
+                <span style="color: red;">[{{ error }}]</span><br>
+                {% endfor %}
+            </p>
+            <!-- Market price field for form -->
+            <p>
+                {{ form.market_price.label }}<br>
+                {{ form.market_price() }}<br>
+        
+                {% for error in form.last_name.errors %}
+                <span style="color: red;">[{{ error }}]</span><br>
+                {% endfor %}
+            </p>
+            <!-- Volume field for form -->
+            <p>
+                {{ form.volume_owned.label }}<br>
+                {{ form.volume_owned() }}<br>
+        
+                {% for error in form.email.errors %}
+                <span style="color: red;">[{{ error }}]</span><br>
+                {% endfor %}
+            </p>
+             <!-- Market volume field for form -->
+             <p>
+                {{ form.market_volume.label }}<br>
+                {{ form.market_volume() }}<br>
+        
+                {% for error in form.email.errors %}
+                <span style="color: red;">[{{ error }}]</span><br>
+                {% endfor %}
+            </p>
+            <!-- Submit button -->
+            <p>{{ form.submit() }}</p>
+        </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footer%}{% endblock %}
