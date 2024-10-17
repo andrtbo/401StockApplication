@@ -56,6 +56,13 @@ class LoginForm(FlaskForm): #Form with fields required for logging in
     password = StringField('Password', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
+class StockForm(FlaskForm): #Form to add the stock to DB
+    stock_ticker = StringField('Stock Ticker', validators=[DataRequired()])
+    company_name = StringField('Company Name', validators=[DataRequired()])
+    market_price = FloatField('Market Price', validators=[DataRequired()])
+    volume_owned = IntegerField('Volume Owned', validators=[DataRequired()])
+    market_volume = IntegerField('Market Volume', validators=[DataRequired()])
+
 # Variables 
 logged_in = True # Used to check if user is logged in. Change to "True" to access pages without logging in
 current_user = User() # User class to temporarily store the logged in user info
@@ -177,3 +184,13 @@ def portfolio():
         return redirect(url_for('login'))
     else:
         return render_template('portfolio.html')
+    
+@app.route("/create_stock", methods=["GET", "POST"])
+def create_stock():
+
+    form = StockForm()
+
+        # Creates a new_user object with form info
+    new_stock = Stock(stock_ticker = form.stock_ticker.data, company_name = form.company_name.data, market_price = form.market_price.data, volume_owned = form.volume_owned.data, market_volume = form.market_volume.data)
+    
+    return render_template('create_stock.html', form=form)
