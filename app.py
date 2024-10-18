@@ -235,3 +235,8 @@ def with_funds():
         return redirect(url_for('with_funds'))
 
     return render_template('with_funds.html', form=form)
+
+@app.route("/trans_history", methods=["GET", "POST"]) #Adjust later for database
+def trans_history():
+
+    return render_template('trans_history.html')
