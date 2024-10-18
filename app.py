@@ -73,6 +73,9 @@ class AddFundsForm(FlaskForm): #Form to add funds to account
     bank_number = IntegerField('Bank Account Number', validators=[DataRequired()])
     submit = SubmitField('Add Funds')
 
+class WithFundsForm(FlaskForm): #Form to withdrawal funds from account
+    withdraw_amount = IntegerField('Withdraw Amount', validators=[DataRequired()])
+    submit = SubmitField('Withdraw Funds')
 
 # Variables 
 logged_in = True # Used to check if user is logged in. Change to "True" to access pages without logging in
@@ -213,3 +216,10 @@ def add_funds():
     form = AddFundsForm()
 
     return render_template('add_funds.html', form=form)
+
+@app.route("/with_funds", methods=["GET", "POST"])
+def with_funds():
+
+    form = WithFundsForm()
+
+    return render_template('with_funds.html', form=form)
