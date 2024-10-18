@@ -178,6 +178,10 @@ def buy_stock():
         form = SearchForm()
 
         return render_template('buy_stock.html', form=form)
+    
+@app.route("/buy/<string:ticker>")
+def buy(ticker):
+    return render_template('buy_page.html', ticker=ticker)
 
 @app.route("/sell_stock", methods=["GET", "POST"])
 def sell_stock():
