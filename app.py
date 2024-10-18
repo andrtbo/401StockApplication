@@ -215,11 +215,19 @@ def add_funds():
 
     form = AddFundsForm()
 
+    if form.validate_on_submit():  #Adjust later to fulfill database needs
+        flash('Funds Added Successfully!')
+        return redirect(url_for('add_funds'))
+
     return render_template('add_funds.html', form=form)
 
 @app.route("/with_funds", methods=["GET", "POST"])
 def with_funds():
 
     form = WithFundsForm()
+
+    if form.validate_on_submit():  #Adjust later to fulfill database needs
+        flash('Funds Withdrawn Successfully!')
+        return redirect(url_for('with_funds'))
 
     return render_template('with_funds.html', form=form)
