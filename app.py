@@ -68,6 +68,12 @@ class SearchForm(FlaskForm):
     search = StringField('Search', validators=[DataRequired()])
     submit = SubmitField('Search')
 
+class AddFundsForm(FlaskForm): #Form to add funds to account
+    deposit_amount = IntegerField('Deposit Amount', validators=[DataRequired()])
+    bank_number = IntegerField('Bank Account Number', validators=[DataRequired()])
+    submit = SubmitField('Add Funds')
+
+
 # Variables 
 logged_in = True # Used to check if user is logged in. Change to "True" to access pages without logging in
 current_user = User() # User class to temporarily store the logged in user info
@@ -200,3 +206,10 @@ def create_stock():
     new_stock = Stock(stock_ticker = form.stock_ticker.data, company_name = form.company_name.data, market_price = form.market_price.data, volume_owned = form.volume_owned.data, market_volume = form.market_volume.data)
     
     return render_template('create_stock.html', form=form)
+
+@app.route("/add_funds", methods=["GET", "POST"])
+def add_funds():
+
+    form = AddFundsForm()
+
+    return render_template('add_funds.html', form=form)

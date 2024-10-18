@@ -1,0 +1,61 @@
+{% extends './base.html' %}
+
+{% block title%}Add Funds{% endblock %}
+
+{% block content%}
+<!-- Login / Create Account card -->
+<div class="card mx-auto" style="width: 50rem;">
+    <!-- Card nav tabs-->
+    <div class="card-header">
+
+    <!-- List group for flashed messages -->
+    <ul class="list-group list-group-flush">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+            <li class="list-group-item" style="color: green;">{{ message }}</li>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+    </ul>
+    
+    <ul class="nav nav-tabs card-header-tabs w-100 justify-content-around">
+        <li class="nav-item">
+            <a class="nav-link active" href="{{ url_for('add_funds') }}">Add Funds</a>
+        </li>
+        <li class="nav-item">
+            <!-- class = "active" determines which nav tab is selected for the page -->
+            <a class="nav-link" href="{{ url_for('dashboard') }}">Return</a>
+        </li>
+    </ul>
+    </div>
+    <!-- Card content -->
+    <div class="card-body">
+    <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        <!-- Deposit Amount field for form -->
+        <p>
+            {{ form.deposit_amount.label }}<br>
+            {{ form.deposit_amount() }}<br>
+    
+            {% for error in form.deposit_amount.errors %}
+            <span style="color: red;">[{{ error }}]</span><br>
+            {% endfor %}
+        </p>
+        <!-- Bank Account Number field for form -->
+        <p>
+            {{ form.bank_number.label }}<br>
+            {{ form.bank_number() }}<br>
+    
+            {% for error in form.bank_number.errors %}
+            <span style="color: red;">[{{ error }}]</span><br>
+            {% endfor %}
+        </p>
+        <!-- Submit button -->
+        <p>{{ form.submit() }}</p>
+    </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block footer%}{% endblock %}
