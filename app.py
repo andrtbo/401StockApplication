@@ -64,6 +64,10 @@ class StockForm(FlaskForm): #Form to add the stock to DB
     market_volume = IntegerField('Market Volume', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
+class SearchForm(FlaskForm):
+    search = StringField('Search', validators=[DataRequired()])
+    submit = SubmitField('Search')
+
 # Variables 
 logged_in = True # Used to check if user is logged in. Change to "True" to access pages without logging in
 current_user = User() # User class to temporarily store the logged in user info
@@ -112,7 +116,7 @@ def login():
                 
                 # Sets the user as logged in and modifies the "current_user" object
                 logged_in = True
-                current_user = User(username = login_account.username, first_name = login_account.first_name, last_name = login_account.last_name, email = login_account.email, password = login_account.password, admin = login_account.admin)
+                current_user = User(user_id = login_account.user_id, username = login_account.username, first_name = login_account.first_name, last_name = login_account.last_name, email = login_account.email, password = login_account.password, admin = login_account.admin)
                 return redirect(url_for('dashboard'))
             else: 
                 flash('The username or password is incorrect.')
@@ -162,7 +166,9 @@ def buy_stock():
         flash('Please log in before accessing stock trading services.')
         return redirect(url_for('login'))
     else:
-        return render_template('buy_stock.html')
+        form = SearchForm()
+
+        return render_template('buy_stock.html', form=form)
 
 @app.route("/sell_stock", methods=["GET", "POST"])
 def sell_stock():
