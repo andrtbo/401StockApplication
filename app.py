@@ -42,6 +42,12 @@ class Transactions(db.Model):
     purchase_price = db.Column(db.Float)
     purchase_volume = db.Column(db.Integer)
 
+class MarketHours(db.Model):
+    start_time = db.Column(db.Integer, primary_key=True)
+    end_time = db.Column(db.Integer)
+    start_day = db.Column(db.String)
+    end_day = db.Column(db.String)
+
 # Classes for forms
 class CreateForm(FlaskForm): #Form with fields required for logging in
     username = StringField('Username', validators=[DataRequired()])
@@ -62,6 +68,26 @@ class StockForm(FlaskForm): #Form to add the stock to DB
     market_price = FloatField('Market Price', validators=[DataRequired()])
     volume_owned = IntegerField('Volume Owned', validators=[DataRequired()])
     market_volume = IntegerField('Market Volume', validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
+class SearchForm(FlaskForm):
+    search = StringField('Search', validators=[DataRequired()])
+    submit = SubmitField('Search')
+
+class AddFundsForm(FlaskForm): #Form to add funds to account
+    deposit_amount = IntegerField('Deposit Amount', validators=[DataRequired()])
+    bank_number = IntegerField('Bank Account Number', validators=[DataRequired()])
+    submit = SubmitField('Add Funds')
+
+class WithFundsForm(FlaskForm): #Form to withdrawal funds from account
+    withdraw_amount = IntegerField('Withdraw Amount', validators=[DataRequired()])
+    submit = SubmitField('Withdraw Funds')
+
+class MarketHours(FlaskForm): #Form to set market hours for application
+    start_time = IntegerField('Start Time (1-24)', validators = [DataRequired()])
+    end_time = IntegerField('End Time (1-24)', validators = [DataRequired()])
+    start_day = StringField('Start Day', validators = [DataRequired()])
+    end_day = StringField('End Day', validators = [DataRequired()])
 
 # Variables 
 logged_in = True # Used to check if user is logged in. Change to "True" to access pages without logging in
@@ -190,7 +216,49 @@ def create_stock():
 
     form = StockForm()
 
-        # Creates a new_user object with form info
+    if form.validate_on_submit():  #Adjust later to fulfill database needs
+        flash('Stock Has Been Added to the Market!')
+        return redirect(url_for('create_stock'))
+
     new_stock = Stock(stock_ticker = form.stock_ticker.data, company_name = form.company_name.data, market_price = form.market_price.data, volume_owned = form.volume_owned.data, market_volume = form.market_volume.data)
     
     return render_template('create_stock.html', form=form)
+
+@app.route("/add_funds", methods=["GET", "POST"])
+def add_funds():
+
+    form = AddFundsForm()
+
+    if form.validate_on_submit():  #Adjust later to fulfill database needs
+        flash('Funds Added Successfully!')
+        return redirect(url_for('add_funds'))
+
+    return render_template('add_funds.html', form=form)
+
+@app.route("/with_funds", methods=["GET", "POST"])
+def with_funds():
+
+    form = WithFundsForm()
+
+    if form.validate_on_submit():  #Adjust later to fulfill database needs
+        flash('Funds Withdrawn Successfully!')
+        return redirect(url_for('with_funds'))
+
+    return render_template('with_funds.html', form=form)
+
+@app.route("/market", methods=["GET", "POST"])
+def market(): 
+    form = MarketHours()
+    
+    if form.validate_on_submit():  #Adjust later to fulfill database needs
+        flash('The market hours have been adjusted')
+        return redirect(url_for('market'))
+
+    new_hours = MarketHours(start_time = form.start_time.data, end_time = form.end_time.data, start_day = form.start_day.data, end_day = form.end_day.data)
+
+    return render_template('market.html', form=form)
+
+@app.route("/trans_history", methods=["GET", "POST"]) #Adjust later for database
+def trans_history():
+
+    return render_template('trans_history.html')
