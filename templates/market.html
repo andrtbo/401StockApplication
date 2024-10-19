@@ -61,11 +61,118 @@
       </div>
     </nav>
   </header>
+  <h1>The current market hours are set to open Monday - Friday 8 AM to 5 PM</h1>
 
-  <!-- Main page content -->
-  <main>
-    {% block content %}{% endblock %}
-    <h1>Market is open M-F 8am to 5pm PT</h1>
+ 
+    <!-- Login / Create Account card -->
+    <div class="card mx-auto" style="width: 50rem;">
+        <!-- Card nav tabs-->
+        <div class="card-header">
+
+        <!-- List group for flashed messages -->
+        <ul class="list-group list-group-flush">
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                <li class="list-group-item" style="color: green;">{{ message }}</li>
+                {% endfor %}
+            {% endif %}
+            {% endwith %}
+        </ul>
+        
+        <ul class="nav nav-tabs card-header-tabs w-100 justify-content-around">
+            <li class="nav-item">
+                <a class="nav-link active" href="{{ url_for('market') }}">Modify Market Hours</a>
+            </li>
+            <li class="nav-item">
+                <!-- class = "active" determines which nav tab is selected for the page -->
+                <a class="nav-link" href="{{ url_for('dashboard') }}">Return</a>
+            </li>
+        </ul>
+        </div>
+        <!-- Card content -->
+        <div class="card-body">
+        <form method="POST" action="">
+            <form action="/action_page.php">
+                <label for="start_time">Start Time:</label>
+                <select id="start_time" name="start_time">
+                  <option value="12am">12 AM</option>
+                  <option value="1am">1 AM</option>
+                  <option value="2am">2 AM</option>
+                  <option value="3am">3 AM</option>
+                  <option value="4am">4 AM</option>
+                  <option value="5am">5 AM</option>
+                  <option value="6am">6 AM</option>
+                  <option value="7am">7 AM</option>
+                  <option value="8am">8 AM</option>
+                  <option value="9am">9 AM</option>
+                  <option value="10am">10 AM</option>
+                  <option value="11am">11 AM</option>
+                  <option value="12pm">12 PM</option>
+                  <option value="1pm">1 PM</option>
+                  <option value="2pm">2 PM</option>
+                  <option value="3pm">3 PM</option>
+                  <option value="4pm">4 PM</option>
+                  <option value="5pm">5 PM</option>
+                  <option value="6pm">6 PM</option>
+                  <option value="7pm">7 PM</option>
+                  <option value="8pm">8 PM</option>
+                  <option value="9pm">9 PM</option>
+                  <option value="10pm">10 PM</option>
+                  <option value="11pm">11 PM</option>
+                </select>
+                <label for="end_time">End Time:</label>
+                <select id="start_time" name="start_time">
+                  <option value="12am">12 AM</option>
+                  <option value="1am">1 AM</option>
+                  <option value="2am">2 AM</option>
+                  <option value="3am">3 AM</option>
+                  <option value="4am">4 AM</option>
+                  <option value="5am">5 AM</option>
+                  <option value="6am">6 AM</option>
+                  <option value="7am">7 AM</option>
+                  <option value="8am">8 AM</option>
+                  <option value="9am">9 AM</option>
+                  <option value="10am">10 AM</option>
+                  <option value="11am">11 AM</option>
+                  <option value="12pm">12 PM</option>
+                  <option value="1pm">1 PM</option>
+                  <option value="2pm">2 PM</option>
+                  <option value="3pm">3 PM</option>
+                  <option value="4pm">4 PM</option>
+                  <option value="5pm">5 PM</option>
+                  <option value="6pm">6 PM</option>
+                  <option value="7pm">7 PM</option>
+                  <option value="8pm">8 PM</option>
+                  <option value="9pm">9 PM</option>
+                  <option value="10pm">10 PM</option>
+                  <option value="11pm">11 PM</option>
+                </select>
+                <label for="start_day">Start Day:</label>
+                <select id="start_day" name="start_day">
+                  <option value="sunday">Sunday</option>
+                  <option value="monday">Monday</option>
+                  <option value="tuesday">Tuesday</option>
+                  <option value="wednesday">Wednesday</option>
+                  <option value="thursday">Thursday</option>
+                  <option value="friday">Friday</option>
+                  <option value="saturday">Saturday</option>
+                </select>
+                <label for="end_day">End Day:</label>
+                <select id="end_day" name="end_day">
+                  <option value="sunday">Sunday</option>
+                  <option value="monday">Monday</option>
+                  <option value="tuesday">Tuesday</option>
+                  <option value="wednesday">Wednesday</option>
+                  <option value="thursday">Thursday</option>
+                  <option value="friday">Friday</option>
+                  <option value="saturday">Saturday</option>
+                <input type="submit">
+              </form>
+        </form>
+        </div>
+    </div>
+
   </main>
 
   <!-- Footer content -->
