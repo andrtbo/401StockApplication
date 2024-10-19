@@ -231,3 +231,12 @@ def with_funds():
         return redirect(url_for('with_funds'))
 
     return render_template('with_funds.html', form=form)
+
+@app.route("/market", methods=["GET", "POST"])
+def market(): 
+
+    form = StockForm()
+
+    new_stock = Stock(stock_ticker = form.stock_ticker.data, company_name = form.company_name.data, market_price = form.market_price.data, volume_owned = form.volume_owned.data, market_volume = form.market_volume.data)
+    
+    return render_template('market.html', form=form)

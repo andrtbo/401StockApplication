@@ -3,7 +3,10 @@
 {% block title%}Dashboard{% endblock %}
 
 {% block content%}
-    <!-- List flashed messages -->
+<!-- Card nav tabs-->
+<div class="card mx-auto" style="width: 50rem;">
+    <!-- Card nav tabs-->
+    <div class="card-header">
     <ul class="list-group list-group-flush">
         {% with messages = get_flashed_messages() %}
         {% if messages %}
@@ -20,9 +23,10 @@
         </li>
         <li class="nav-item">
             <!-- class = "active" determines which nav tab is selected for the page -->
-            <a class="nav-link active" href="{{ url_for('create_account') }}">Create Account</a>
+            <a class="nav-link active" href="{{ url_for('market') }}">Modify Market Hours</a>
         </li>
     </ul>
+</div>
 {% endblock %}
 
 {% block footer%}Footer{% endblock %}
