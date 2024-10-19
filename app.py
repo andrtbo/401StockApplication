@@ -178,6 +178,10 @@ def buy_stock():
         form = SearchForm()
 
         return render_template('buy_stock.html', form=form)
+    
+@app.route("/buy/<string:ticker>")
+def buy(ticker):
+    return render_template('buy_page.html', ticker=ticker)
 
 @app.route("/sell_stock", methods=["GET", "POST"])
 def sell_stock():
@@ -234,9 +238,10 @@ def with_funds():
 
 @app.route("/market", methods=["GET", "POST"])
 def market(): 
-
-    form = StockForm()
-
-    new_stock = Stock(stock_ticker = form.stock_ticker.data, company_name = form.company_name.data, market_price = form.market_price.data, volume_owned = form.volume_owned.data, market_volume = form.market_volume.data)
     
-    return render_template('market.html', form=form)
+    return render_template('market.html')
+
+@app.route("/trans_history", methods=["GET", "POST"]) #Adjust later for database
+def trans_history():
+
+    return render_template('trans_history.html')

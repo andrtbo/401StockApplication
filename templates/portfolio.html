@@ -3,14 +3,24 @@
 {% block title%}Portfolio{% endblock %}
 
 {% block content%}
+<div class="card mx-auto" style="width: 50rem;">
+    <!-- Card nav tabs-->
+    <div class="card-header">
+    
     <ul class="nav nav-tabs card-header-tabs w-100">
+
+    <ul class="nav nav-tabs card-header-tabs w-100 justify-content-around">
         <li class="nav-item">
             <a class="nav-link" href="{{ url_for('add_funds') }}">Add Funds</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="{{ url_for('with_funds') }}">Withdraw Funds</a>
         </li>
+        <li class="nav-item"></li>
+            <a class="nav-link" href="{{ url_for('trans_history') }}">Transaction History</a>
+        </li>
     </ul>
+</div>
 {% endblock %}
 
 {% block footer%}{% endblock %}
