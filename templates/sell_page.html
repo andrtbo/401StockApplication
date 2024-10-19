@@ -1,6 +1,6 @@
 {% extends './base.html' %}
 
-{% block title%}Purchase {{ ticker }}{% endblock %}
+{% block title%}Sell {{ ticker }}{% endblock %}
 
 {% block content%}
 <div class="row">
@@ -11,14 +11,14 @@
     <div class="col">
         <div class="card">
             <div class="card-header text-center">
-                Buy {{ ticker }}
+                Sell {{ ticker }}
             </div>
             <div class="card-body">
                 <form method="POST" action="">
                     {{ form.hidden_tag() }}
                     <!-- Stock input -->
                     <p>
-                        How much {{ ticker }} would you like to purchase?<br>
+                        How much {{ ticker }} would you like to sell?<br>
                         {{ form.stock_amount() }}<br>
                 
                         {% for error in form.stock_amount.errors %}
@@ -28,7 +28,7 @@
                     <!-- Calculate Price -->
                     <p>{{ form.submit() }}</p>
                     <p>
-                        Total Price:<br>
+                        Total Value:<br>
                         ${{ price }}<br>
                     </p>
                     

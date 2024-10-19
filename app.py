@@ -89,6 +89,13 @@ class MarketHours(FlaskForm): #Form to set market hours for application
     start_day = StringField('Start Day', validators = [DataRequired()])
     end_day = StringField('End Day', validators = [DataRequired()])
 
+class TradeInput(FlaskForm): # Form for inputting the amount of stock to buy/sell
+    stock_amount = IntegerField('How many stocks would you like to purchase?', validators=[DataRequired()])
+    submit = SubmitField('Calculate total')
+
+class ConfirmPurchase(FlaskForm):
+    submit = SubmitField('Purchase')
+
 # Variables 
 logged_in = True # Used to check if user is logged in. Change to "True" to access pages without logging in
 current_user = User() # User class to temporarily store the logged in user info
@@ -178,8 +185,8 @@ def create_account():
     
     return render_template('create_account.html', form=form)
 
-@app.route("/buy_stock", methods=["GET", "POST"]) 
-def buy_stock():
+@app.route("/stocks", methods=["GET", "POST"]) 
+def stocks():
     global logged_in
 
     # Return to the login page if not logged in
@@ -189,22 +196,39 @@ def buy_stock():
     else:
         form = SearchForm()
 
-        return render_template('buy_stock.html', form=form)
+        return render_template('stocks.html', form=form)
     
-@app.route("/buy/<string:ticker>")
+@app.route("/buy/<string:ticker>", methods=["GET", "POST"])
 def buy(ticker):
-    return render_template('buy_page.html', ticker=ticker)
+    price = 0.0
+    form = TradeInput()
+    form2 = ConfirmPurchase()
 
-@app.route("/sell_stock", methods=["GET", "POST"])
-def sell_stock():
-    global logged_in
+    if form.validate_on_submit():
+        price = "{:.2f}".format(float(form.stock_amount.data) * 5.03, 2)
+        return render_template('buy_page.html', ticker=ticker, form=form, form2=form2, price=str(price))
 
-    # Return to the login page if not logged in
-    if not logged_in:
-        flash('Please log in before accessing stock trading services.')
-        return redirect(url_for('login'))
-    else:
-        return render_template('sell_stock.html')
+    if form2.validate_on_submit():
+        flash('Stock purchased successfully! Visit transaction history to view.')
+        return redirect(url_for('dashboard'))
+
+    return render_template('buy_page.html', ticker=ticker, form=form, form2=form2, price=price)
+
+@app.route("/sell/<string:ticker>", methods=["GET", "POST"])
+def sell(ticker):
+    price = 0.0
+    form = TradeInput()
+    form2 = ConfirmPurchase()
+
+    if form.validate_on_submit():
+        price = "{:.2f}".format(float(form.stock_amount.data) * 5.03, 2)
+        return render_template('sell_page.html', ticker=ticker, form=form, form2=form2, price=str(price))
+
+    if form2.validate_on_submit():
+        flash('Stock sold successfully! Visit transaction history to view.')
+        return redirect(url_for('dashboard'))
+
+    return render_template('sell_page.html', ticker=ticker, form=form, form2=form2, price=price)
 
 @app.route("/portfolio")
 def portfolio():
