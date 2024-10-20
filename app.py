@@ -116,7 +116,7 @@ def test_unique(input_user): # Checks to see if a created account's username or 
         except AttributeError:
             return True
 
-@app.route("/")
+@app.route("/dashboard")
 def dashboard():
     global logged_in # Makes sure all functions are accessing/editing the same "logged_in" variable
 
@@ -230,7 +230,7 @@ def sell(ticker):
 
     return render_template('sell_page.html', ticker=ticker, form=form, form2=form2, price=price)
 
-@app.route("/portfolio")
+@app.route("/")
 def portfolio():
     global logged_in
 
