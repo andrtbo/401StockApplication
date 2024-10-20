@@ -3,6 +3,21 @@
 {% block title%}Portfolio{% endblock %}
 
 {% block content%}
+<style>
+    h1{
+        text-align: right;
+        font-size: large;
+        color: blue;
+    }
+    h2{
+        text-align: right;
+        font-size: large;
+        color: blue;
+    }
+</style>
+<h1>Account Value: $415.40</h1>
+<h2>Buying Power: $40.33</h2>
+
 <div class="card mx-auto" style="width: 50rem;">
     <!-- Card nav tabs-->
     <div class="card-header">
@@ -21,6 +36,63 @@
         </li>
     </ul>
 </div>
+<!-- Table for holding the stock data -->
+<table class="table table-hover">
+    <!-- Table headings -->
+    <thead>
+        <tr>
+            <th scope="col" class="text-center">Ticker</th>
+            <th scope="col" class="text-center">Company</th>
+            <th scope="col" class="text-center">Today's Change</th>
+            <th scope="col" class="text-center">Volume Owned</th>
+            <th scope="col" class="text-center">Price</th>
+            <th scope="col" class="text-center">Total Value</th>
+            <th scope="col" class="text-center"></th>
+            <th scope="col" class="text-center"></th>
+        </tr>
+    </thead>
+    <tbody class="table-group-divider">
+        <td class="text-center my-auto align-middle">TEST</th>
+        <td class="text-center align-middle">Tesla Motors</th>
+        <td class="text-center align-middle">-0.57%</th>
+        <td class="text-center align-middle">11</th>
+        <td class="text-center align-middle">$5.03</th>
+        <td class="text-center align-middle">$55.33</th>
+        <td class="text-center align-middle">
+            <a class="btn btn-secondary" role="button" href="{{ url_for('buy', ticker = 'TSLA') }}">Buy</button>
+        </th>
+        <td class="text-center align-middle">
+            <a class="btn btn-secondary" role="button" href="{{ url_for('sell', ticker = 'TSLA') }}">Sell</button>
+        </th>
+    </tbody>
+    <tbody class="table-group-divider">
+        <td class="text-center my-auto align-middle">TSLA</th>
+        <td class="text-center align-middle">Tesla Motors</th>
+        <td class="text-center align-middle">+3.12%</th>
+        <td class="text-center align-middle">4</th>
+        <td class="text-center align-middle">$74.23</th>
+        <td class="text-center align-middle">$296.92</th>
+        <td class="text-center align-middle">
+            <a class="btn btn-secondary" role="button" href="{{ url_for('buy', ticker = 'TSLA') }}">Buy</button>
+        </th>
+        <td class="text-center align-middle">
+            <a class="btn btn-secondary" role="button" href="{{ url_for('sell', ticker = 'TSLA') }}">Sell</button>
+        </th>
+    </tbody>
+    <tbody class="table-group-divider">
+        <td class="text-center my-auto align-middle">GLDF</th>
+        <td class="text-center align-middle">Goldfish</th>
+        <td class="text-center align-middle">+8.35%</th>
+        <td class="text-center align-middle">7</th>
+        <td class="text-center align-middle">$3.26</th>
+        <td class="text-center align-middle">$22.82</th>
+        <td class="text-center align-middle">
+            <a class="btn btn-secondary" role="button" href="{{ url_for('buy', ticker = 'TSLA') }}">Buy</button>
+        </th>
+        <td class="text-center align-middle">
+            <a class="btn btn-secondary" role="button" href="{{ url_for('sell', ticker = 'TSLA') }}">Sell</button>
+        </th>
+    </tbody>
 {% endblock %}
 
 {% block footer%}{% endblock %}
