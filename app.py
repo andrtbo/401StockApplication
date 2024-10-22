@@ -45,8 +45,8 @@ class Transactions(db.Model):
 class MarketHours(db.Model):
     start_time = db.Column(db.Integer, primary_key=True)
     end_time = db.Column(db.Integer)
-    start_day = db.Column(db.String)
-    end_day = db.Column(db.String)
+    start_day = db.Column(db.String(10))
+    end_day = db.Column(db.String(10))
 
 # Classes for forms
 class CreateForm(FlaskForm): #Form with fields required for logging in
@@ -97,7 +97,7 @@ class ConfirmPurchase(FlaskForm):
     submit = SubmitField('Purchase')
 
 # Variables 
-logged_in = False # Used to check if user is logged in. Change to "True" to access pages without logging in
+logged_in = True # Used to check if user is logged in. Change to "True" to access pages without logging in
 current_user = User() # User class to temporarily store the logged in user info
 
 # Functions
@@ -232,7 +232,6 @@ def sell(ticker):
 
 @app.route("/")
 def portfolio():
-    db.create_all()
     global logged_in
 
     # Return to the login page if not logged in
