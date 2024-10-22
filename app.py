@@ -97,7 +97,7 @@ class ConfirmPurchase(FlaskForm):
     submit = SubmitField('Purchase')
 
 # Variables 
-logged_in = True # Used to check if user is logged in. Change to "True" to access pages without logging in
+logged_in = False # Used to check if user is logged in. Change to "True" to access pages without logging in
 current_user = User() # User class to temporarily store the logged in user info
 
 # Functions
@@ -232,6 +232,7 @@ def sell(ticker):
 
 @app.route("/")
 def portfolio():
+    db.create_all()
     global logged_in
 
     # Return to the login page if not logged in
