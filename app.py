@@ -232,6 +232,7 @@ def sell(ticker):
 
 @app.route("/")
 def portfolio():
+    db.create_all()
     global logged_in
 
     # Return to the login page if not logged in
