@@ -26,13 +26,13 @@
 
     <ul class="nav nav-tabs card-header-tabs w-100 justify-content-around">
         <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('add_funds') }}">Add Funds</a>
+            <a class="nav-link" href="{{ url_for('routes.add_funds') }}">Add Funds</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('with_funds') }}">Withdraw Funds</a>
+            <a class="nav-link" href="{{ url_for('routes.with_funds') }}">Withdraw Funds</a>
         </li>
         <li class="nav-item"></li>
-            <a class="nav-link" href="{{ url_for('trans_history') }}">Transaction History</a>
+            <a class="nav-link" href="{{ url_for('routes.trans_history') }}">Transaction History</a>
         </li>
     </ul>
 </div>
@@ -59,10 +59,10 @@
         <td class="text-center align-middle">$5.03</th>
         <td class="text-center align-middle">$55.33</th>
         <td class="text-center align-middle">
-            <a class="btn btn-secondary" role="button" href="{{ url_for('buy', ticker = 'TSLA') }}">Buy</button>
+            <a class="btn btn-secondary" role="button" href="{{ url_for('routes.buy', ticker = 'TSLA') }}">Buy</button>
         </th>
         <td class="text-center align-middle">
-            <a class="btn btn-secondary" role="button" href="{{ url_for('sell', ticker = 'TSLA') }}">Sell</button>
+            <a class="btn btn-secondary" role="button" href="{{ url_for('routes.sell', ticker = 'TSLA') }}">Sell</button>
         </th>
     </tbody>
     <tbody class="table-group-divider">
@@ -73,10 +73,10 @@
         <td class="text-center align-middle">$74.23</th>
         <td class="text-center align-middle">$296.92</th>
         <td class="text-center align-middle">
-            <a class="btn btn-secondary" role="button" href="{{ url_for('buy', ticker = 'TSLA') }}">Buy</button>
+            <a class="btn btn-secondary" role="button" href="{{ url_for('routes.buy', ticker = 'TSLA') }}">Buy</button>
         </th>
         <td class="text-center align-middle">
-            <a class="btn btn-secondary" role="button" href="{{ url_for('sell', ticker = 'TSLA') }}">Sell</button>
+            <a class="btn btn-secondary" role="button" href="{{ url_for('routes.sell', ticker = 'TSLA') }}">Sell</button>
         </th>
     </tbody>
     <tbody class="table-group-divider">
@@ -87,10 +87,10 @@
         <td class="text-center align-middle">$3.26</th>
         <td class="text-center align-middle">$22.82</th>
         <td class="text-center align-middle">
-            <a class="btn btn-secondary" role="button" href="{{ url_for('buy', ticker = 'TSLA') }}">Buy</button>
+            <a class="btn btn-secondary" role="button" href="{{ url_for('routes.buy', ticker = 'TSLA') }}">Buy</button>
         </th>
         <td class="text-center align-middle">
-            <a class="btn btn-secondary" role="button" href="{{ url_for('sell', ticker = 'TSLA') }}">Sell</button>
+            <a class="btn btn-secondary" role="button" href="{{ url_for('routes.sell', ticker = 'TSLA') }}">Sell</button>
         </th>
     </tbody>
 {% endblock %}

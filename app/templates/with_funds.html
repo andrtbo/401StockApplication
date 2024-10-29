@@ -1,9 +1,9 @@
 {% extends './base.html' %}
 
-{% block title%}Add Funds{% endblock %}
+{% block title%}Withdraw Funds{% endblock %}
 
 {% block content%}
-<!-- Add funds / return card -->
+<!-- Withdraw / return card -->
 <div class="card mx-auto" style="width: 50rem;">
     <!-- Card nav tabs-->
     <div class="card-header">
@@ -21,11 +21,11 @@
     
     <ul class="nav nav-tabs card-header-tabs w-100 justify-content-around">
         <li class="nav-item">
-            <a class="nav-link active" href="#">Add Funds</a>
+            <a class="nav-link active" href="#">Withdraw Funds</a>
         </li>
         <li class="nav-item">
             <!-- class = "active" determines which nav tab is selected for the page -->
-            <a class="nav-link" href="{{ url_for('portfolio') }}">Return</a>
+            <a class="nav-link" href="{{ url_for('routes.portfolio') }}">Return</a>
         </li>
     </ul>
     </div>
@@ -33,26 +33,17 @@
     <div class="card-body">
     <form method="POST" action="">
         {{ form.hidden_tag() }}
-        <!-- Deposit Amount field for form -->
+        <!-- Withdraw Amount field for form -->
         <p>
-            {{ form.deposit_amount.label }}<br>
-            {{ form.deposit_amount() }}<br>
+            {{ form.withdraw_amount.label }}<br>
+            {{ form.withdraw_amount() }}<br>
     
-            {% for error in form.deposit_amount.errors %}
-            <span style="color: red;">[{{ error }}]</span><br>
-            {% endfor %}
-        </p>
-        <!-- Bank Account Number field for form -->
-        <p>
-            {{ form.bank_number.label }}<br>
-            {{ form.bank_number() }}<br>
-    
-            {% for error in form.bank_number.errors %}
+            {% for error in form.withdraw_amount.errors %}
             <span style="color: red;">[{{ error }}]</span><br>
             {% endfor %}
         </p>
         <!-- Submit button -->
-        <p>{{ form.submit(onclick="return confirm('Are you sure you want to add funds?')") }}</p>
+        <p>{{ form.submit() }}</p>
     </form>
     </div>
 </div>
