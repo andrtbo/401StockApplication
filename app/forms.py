@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, FloatField, IntegerField
 from wtforms.validators import DataRequired, Email
+from markupsafe import Markup
 
 from .extensions import db
 
@@ -45,9 +46,9 @@ class MarketHours(FlaskForm): #Form to set market hours for application
     start_day = StringField('Start Day', validators = [DataRequired()])
     end_day = StringField('End Day', validators = [DataRequired()])
 
-class TradeInput(FlaskForm): # Form for inputting the amount of stock to buy/sell
+class TradeInput(FlaskForm): # Takes input for the volume of stock to be bought/sold
     stock_amount = IntegerField('How many stocks would you like to purchase?', validators=[DataRequired()])
-    submit = SubmitField('Calculate total')
+    submit = SubmitField()
 
-class ConfirmPurchase(FlaskForm):
+class ConfirmPurchase(FlaskForm): # Submit button for buying/selling stock
     submit = SubmitField('Purchase')

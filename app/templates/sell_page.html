@@ -14,29 +14,31 @@
                 Sell {{ ticker }}
             </div>
             <div class="card-body">
-                <form method="POST" action="">
-                    {{ form.hidden_tag() }}
+                <form method="POST" id="volume_form">
+                    {{ volume_form.hidden_tag() }}
                     <!-- Stock input -->
                     <p>
                         How much {{ ticker }} would you like to sell?<br>
-                        {{ form.stock_amount() }}<br>
+                        {{ volume_form.stock_amount(onblur="volume_form.submit()") }}<br>
                 
-                        {% for error in form.stock_amount.errors %}
+                        {% for error in volume_form.stock_amount.errors %}
                         <span style="color: red;">[{{ error }}]</span><br>
                         {% endfor %}
                     </p>
-                    <!-- Calculate Price -->
-                    <p>{{ form.submit() }}</p>
-                    <p>
-                        Total Value:<br>
-                        ${{ price }}<br>
-                    </p>
-                    
                 </form>
-                <form method="POST" action="">
-                    {{ form2.hidden_tag() }}
-                    <!-- Confirm transaction popup -->
-                    {{ form2.submit(onclick="return confirm('Confirm transaction? Please ensure that the total has been calculated for the most recent stock amount.')") }}
+
+                {% if volume_form.stock_amount.data is not none %}
+                    {% set total = ('%0.2f' | format(volume_form.stock_amount.data * 5.03)) %}
+                {% endif %}
+
+                <form method="POST" id="submit_form">
+                    {% if volume_form.stock_amount.data is none %}
+                        <button onclick="return alert('Please enter a stock amount.')">Submit</button>
+                    {% else %}
+                        <button onclick="return confirm(
+                            'Would you like to sell {{ volume_form.stock_amount.data }} {{ ticker }} for ${{ total }}?'
+                        )">Submit</button>
+                    {% endif %}
                 </form>
             </div>
         </div>
