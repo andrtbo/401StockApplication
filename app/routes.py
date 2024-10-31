@@ -116,8 +116,7 @@ def buy(ticker):
     # The form.submit.data conditional is needed so the forms don't submit each other
     if volume_form.submit.data and volume_form.validate_on_submit(): # Re-renders the page with updated form data value
         return render_template('buy_page.html', ticker=ticker, volume_form=volume_form, submit_form=submit_form)
-
-    if submit_form.submit.data and submit_form.validate_on_submit(): # Actually submits the form
+    elif volume_form.submit.data and submit_form.validate_on_submit(): # Actually submits the form
         flash('Stock purchased successfully! Visit transaction history to view.')
         return redirect(url_for('routes.dashboard'))
 
@@ -147,7 +146,13 @@ def portfolio():
         return redirect(url_for('routes.login'))
     else:
         return render_template('portfolio.html')
-    
+
+@routes.route("/load-db")
+def load_db():    
+    db.create_all()
+    flash('DB Created')
+    return render_template('dashboard.html')
+
 @routes.route("/create_stock", methods=["GET", "POST"])
 def create_stock():
 
