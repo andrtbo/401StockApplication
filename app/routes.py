@@ -125,31 +125,27 @@ def stocks():
     
 @routes.route("/buy/<string:ticker>", methods=["GET", "POST"])
 def buy(ticker):
-    volume_form = TradeInput()
-    submit_form = ConfirmPurchase()
+    volume_form = TransactionForm()
 
     # The form.submit.data conditional is needed so the forms don't submit each other
-    if volume_form.submit.data and volume_form.validate_on_submit(): # Re-renders the page with updated form data value
-        return render_template('buy_page.html', ticker=ticker, volume_form=volume_form, submit_form=submit_form)
-    elif volume_form.submit.data and submit_form.validate_on_submit(): # Actually submits the form
-        flash('Stock purchased successfully! Visit transaction history to view.')
+    if volume_form.validate_on_submit(): # Re-renders the page with updated form data value
+        price = "{:.2f}".format(volume_form.stock_amount.data)
+        flash(str(volume_form.stock_amount.data) + " " + ticker + " successfully purchased for $" + str(price) + ".")
         return redirect(url_for('routes.dashboard'))
 
-    return render_template('buy_page.html', ticker=ticker, volume_form=volume_form, submit_form=submit_form)
+    return render_template('buy_page.html', ticker=ticker, volume_form=volume_form)
 
 @routes.route("/sell/<string:ticker>", methods=["GET", "POST"]) # Same notes from /buy apply
 def sell(ticker):
-    volume_form = TradeInput()
-    submit_form = ConfirmPurchase()
+    volume_form = TransactionForm()
 
-    if volume_form.submit.data and volume_form.validate_on_submit(): 
-        return render_template('sell_page.html', ticker=ticker, volume_form=volume_form, submit_form=submit_form)
-
-    if submit_form.submit.data and submit_form.validate_on_submit():
-        flash('Stock sold successfully! Visit transaction history to view.')
+    # The form.submit.data conditional is needed so the forms don't submit each other
+    if volume_form.validate_on_submit(): # Re-renders the page with updated form data value
+        price = "{:.2f}".format(volume_form.stock_amount.data)
+        flash(str(volume_form.stock_amount.data) + " " + ticker + " successfully sold for $" + str(price) + ".")
         return redirect(url_for('routes.dashboard'))
 
-    return render_template('sell_page.html', ticker=ticker, volume_form=volume_form, submit_form=submit_form)
+    return render_template('sell_page.html', ticker=ticker, volume_form=volume_form)
 
 @routes.route("/")
 def portfolio():

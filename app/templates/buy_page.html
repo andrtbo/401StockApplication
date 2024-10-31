@@ -19,27 +19,42 @@
                     <!-- Stock input -->
                     <p>
                         How much {{ ticker }} would you like to purchase?<br>
-                        {{ volume_form.stock_amount(onblur="volume_form.submit()") }}<br> 
-                
+                        {{ volume_form.stock_amount(value=1, id="volume", onkeyup="get_volume()") }}<br> 
+
                         {% for error in volume_form.stock_amount.errors %}
                         <span style="color: red;">[{{ error }}]</span><br   >
                         {% endfor %}
-                    </p>
+                    </p>    
                 </form>
 
-                {% if volume_form.stock_amount.data is not none %}
-                    {% set total = ('%0.2f' | format(volume_form.stock_amount.data * 5.03)) %}
-                {% endif %}
+                <script>
+                    function get_volume() {
+                        var volume = document.getElementById('volume').value;
+                        document.getElementById("volume_display").innerHTML = volume;
+                        document.getElementById("price_display").innerHTML = (volume * 5.03).toFixed(2);
+                    }
+                </script>   
 
-                <form method="POST" id="submit_form">
-                    {% if volume_form.stock_amount.data is none %}
-                        <button onclick="return alert('Please enter a stock amount.')">Submit</button>
-                    {% else %}
-                        <button onclick="return confirm(
-                            'Would you like to purchase {{ volume_form.stock_amount.data }} {{ ticker }} for ${{ total }}?'
-                        )">Submit</button>
-                    {% endif %}
-                </form>
+                <button data-bs-toggle="modal" onclick="get_volume()" data-bs-target="#transaction">
+                    Submit
+                </button>
+                
+                <div class="modal fade" id="transaction" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h1 class="modal-title fs-5" id="exampleModalLabel">Confirm Transaction</h1>
+                        </div>
+                        <div class="modal-body" id="submitPrompt">
+                            <p>Would you like to purchase <span id="volume_display"></span> {{ ticker }} for $<span id="price_display"></span> ?</p>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                          <button type="button" class="btn btn-primary" onclick="volume_form.submit()">Confirm</button>
+                        </div>
+                      </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

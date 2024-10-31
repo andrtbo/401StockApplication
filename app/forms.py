@@ -46,9 +46,6 @@ class MarketHours(FlaskForm): #Form to set market hours for application
     start_day = StringField('Start Day', validators = [DataRequired()])
     end_day = StringField('End Day', validators = [DataRequired()])
 
-class TradeInput(FlaskForm): # Takes input for the volume of stock to be bought/sold
-    stock_amount = IntegerField('How many stocks would you like to purchase?', validators=[DataRequired()])
+class TransactionForm(FlaskForm): # Takes input for the volume of stock to be bought/sold
+    stock_amount = IntegerField('Volume', validators=[DataRequired()])
     submit = SubmitField()
-
-class ConfirmPurchase(FlaskForm): # Submit button for buying/selling stock
-    submit = SubmitField('Purchase')
