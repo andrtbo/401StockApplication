@@ -25,6 +25,21 @@ def test_unique(input_user): # Checks to see if a created account's username or 
         except AttributeError:
             return True
 
+def unique_stock(input_stock):
+    try:
+        test_stock = Stock.query.filter_by(stock_ticker = input_stock.stock_ticker).first()
+        if test_stock.stock_ticker == input_stock.stock_ticker:
+            flash("This stock ticker is already in use.")
+            return False
+    except AttributeError:
+        try:
+            test_stock = Stock.query.filter_by(company_name = input_stock.company_name).first()
+            if test_stock.company_name == input_stock.company_name:
+                flash("The company name is already in use.")
+                return False
+        except AttributeError:
+            return True
+
 # Routes
 @routes.route("/dashboard")
 def dashboard():
@@ -159,11 +174,17 @@ def create_stock():
     form = StockForm()
 
     if form.validate_on_submit():  #Adjust later to fulfill database needs
-        flash('Stock Has Been Added to the Market!')
-        return redirect(url_for('routes.create_stock'))
-
-    new_stock = Stock(stock_ticker = form.stock_ticker.data, company_name = form.company_name.data, market_price = form.market_price.data, volume_owned = form.volume_owned.data, market_volume = form.market_volume.data)
+        
+        new_stock = Stock(stock_ticker = form.stock_ticker.data, company_name = form.company_name.data, market_price = form.market_price.data, volume_owned = form.volume_owned.data, market_volume = form.market_volume.data)
     
+        uniqueness = unique_stock(new_stock)
+
+        if uniqueness == True:
+            db.session.add(new_stock)
+            db.session.commit()
+            flash("Stock has successfully been added.")
+            return redirect(url_for('routes.create_stock'))
+
     return render_template('create_stock.html', form=form)
 
 @routes.route("/add_funds", methods=["GET", "POST"])
