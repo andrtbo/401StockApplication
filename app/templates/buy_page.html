@@ -37,9 +37,9 @@
                         {% endfor %}
                     </p>    
                 </form>
-                
+
                 <script>
-                    var price = {{ stock.market_price | tojson }}
+                    var price = '{{ stock.market_price | tojson }}'
 
                     function get_volume() {
                         var volume = document.getElementById('volume').value;
