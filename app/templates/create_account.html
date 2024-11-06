@@ -5,6 +5,14 @@
 {% block content%}
     <!-- Login / Create Account card -->
     <div class="card mx-auto" style="width: 50rem;">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+            <li class="list-group-item" style="color: green;">{{ message }}</li>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+
         <!-- Card nav tabs-->
         <div class="card-header">
         <ul class="nav nav-tabs card-header-tabs w-100 justify-content-around">
