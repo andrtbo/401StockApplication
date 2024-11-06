@@ -147,13 +147,13 @@ def stocks():
 def buy(ticker):
     volume_form = TransactionForm()
     stock = Stock.query.filter_by(stock_ticker = ticker).first()
+    modify_stock = OwnedStock.query.filter_by(user_id = current_user.user_id).filter_by(stock_ticker = ticker).first()
 
     # The form.submit.data conditional is needed so the forms don't submit each other
     if volume_form.validate_on_submit(): # Re-renders the page with updated form data value
         price = float("{:.2f}".format(volume_form.stock_amount.data * stock.market_price))
         
         if current_user.balance > price: 
-            modify_stock = OwnedStock.query.filter_by(user_id = current_user.user_id).filter_by(stock_ticker = ticker).first()
             try: 
                 modify_stock.volume_owned = modify_stock.volume_owned + volume_form.stock_amount.data
             except AttributeError:
@@ -182,28 +182,64 @@ def buy(ticker):
                 balance = current_user.balance
             )
 
+    try:
+        volume_owned = modify_stock.volume_owned + 0
+    except AttributeError:
+        volume_owned = 0
+    
     return render_template(
         'buy_page.html',
         ticker = ticker,
         volume_form = volume_form,
         price = stock.market_price,
-        balance = current_user.balance
+        balance = current_user.balance,
+        volume_owned = volume_owned
     )
 
 @routes.route("/sell/<string:ticker>", methods=["GET", "POST"]) # Same notes from /buy apply
 def sell(ticker):
     volume_form = TransactionForm()
+    stock = Stock.query.filter_by(stock_ticker = ticker).first()
+    modify_stock = OwnedStock.query.filter_by(user_id = current_user.user_id).filter_by(stock_ticker = ticker).first()
 
     # The form.submit.data conditional is needed so the forms don't submit each other
     if volume_form.validate_on_submit(): # Re-renders the page with updated form data value
-        price = "{:.2f}".format(volume_form.stock_amount.data)
-        flash(str(volume_form.stock_amount.data) + " " + ticker + " successfully sold for $" + str(price) + ".")
-        return redirect(url_for('routes.portfolio'))
+        price = float("{:.2f}".format(volume_form.stock_amount.data  * stock.market_price))
+ 
+        if modify_stock.volume_owned >= volume_form.stock_amount.data:
+            modify_stock = OwnedStock.query.filter_by(user_id = current_user.user_id).filter_by(stock_ticker = ticker).first()
+            modify_stock.volume_owned = modify_stock.volume_owned - volume_form.stock_amount.data
+
+            modify_user = User.query.filter_by(user_id = current_user.user_id).first()
+            modify_user.balance = modify_user.balance + price
+
+            record_transaction(ticker, -volume_form.stock_amount.data, price)
+
+            db.session.commit()
+            flash(str(volume_form.stock_amount.data) + " " + ticker + " successfully sold for $" + str(price) + ".")
+            return redirect(url_for('routes.portfolio'))
+        else: 
+            flash('Transaction failed due to insufficient shares.')
+            return render_template(
+                'sell_page.html',
+                ticker = ticker,
+                volume_form = volume_form,
+                price = stock.market_price,
+                balance = current_user.balance
+            )
+
+    try:
+        volume_owned = modify_stock.volume_owned + 0
+    except AttributeError:
+        volume_owned = 0
 
     return render_template(
         'sell_page.html',
         ticker=ticker,
-        volume_form=volume_form
+        volume_form=volume_form,
+        price = stock.market_price,
+        balance = current_user.balance,
+        volume_owned = volume_owned
     )
 
 @routes.route("/portfolio")

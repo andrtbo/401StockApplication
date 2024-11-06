@@ -3,10 +3,21 @@
 {% block title%}Sell {{ ticker }}{% endblock %}
 
 {% block content%}
+<div class="row text-center">
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        {% for message in messages %}
+        <a style="color: red;" href="{{ url_for('routes.buy', ticker = ticker) }}">{{ message }}</br>Would you like to buy stock?</a>
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
+</div>
 <div class="row">
-    <div class="col text-center">
+    <div class="col">
         <h2 >Test Company - TEST</h2>
-        <h4>$5.03 per share</h4>
+        <h4>${{ price }} per share</h4>
+        <h4>Current balance: ${{ balance }}</h4>
+        <h4>Volume owned: {{ volume_owned }}</h4>
     </div>
     <div class="col">
         <div class="card">

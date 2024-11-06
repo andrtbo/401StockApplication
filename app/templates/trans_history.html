@@ -19,8 +19,8 @@
             <th scope="col" class="text-center">Transaction No.</th>
             <th scope="col" class="text-center">Ticker</th>
             <th scope="col" class="text-center">Company</th>
-            <th scope="col" class="text-center">Volume Bought/Sold</th>
-            <th scope="col" class="text-center">Price</th>
+            <th scope="col" class="text-center">Volume</th>
+            <th scope="col" class="text-center">Balance Change</th>
             <th scope="col" class="text-center">Date/Time</th>
         </tr>
     </thead>
@@ -30,7 +30,11 @@
         <td class="text-center my-auto align-middle">{{ transaction.stock_ticker }}</th>
         <td class="text-center align-middle">{{ transaction.company_name }}</th>
         <td class="text-center align-middle">{{ transaction.purchase_volume }}</th>
-        <td class="text-center align-middle">${{ transaction.purchase_price }}</th>
+        {% if transaction.purchase_volume > 0 %}
+            <td class="text-center align-middle">+${{ transaction.purchase_price }}</th>
+        {% else %}
+            <td class="text-center align-middle">-${{ transaction.purchase_price }}</th>  
+        {% endif %}
         <td class="text-center align-middle">{{ transaction.transaction_time }}</th>
     </tbody>
     {% endfor %} 
