@@ -13,7 +13,7 @@
     {% endwith %}
 </div>
 <div class="row">
-    <div class="col text-center">
+    <div class="col">
         <h2 >Test Company - TEST</h2>
         <h4>${{ price }} per share</h4>
         <h4>Current balance: ${{ balance }}</h4>
@@ -36,7 +36,6 @@
                         {% endfor %}
                     </p>    
                 </form>
-
                 <script>
                     function get_volume() {
                         var volume = document.getElementById('volume').value;
@@ -49,14 +48,14 @@
                     Submit
                 </button>
                 
-                <div class="modal fade" id="transaction" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal fade" id="transaction" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog">
                       <div class="modal-content">
                         <div class="modal-header">
                           <h1 class="modal-title fs-5" id="exampleModalLabel">Confirm Transaction</h1>
                         </div>
                         <div class="modal-body" id="submitPrompt">
-                            <p>Would you like to purchase <span id="volume_display"></span> {{ ticker }} for $<span id="price_display"></span> ?</p>
+                            <p>Would you like to purchase <span id="volume_display"></span> {{ ticker }} for $<span id="price_display"></span>?</p>
                         </div>
                         <div class="modal-footer">
                           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>

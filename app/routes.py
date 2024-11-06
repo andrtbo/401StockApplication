@@ -92,7 +92,6 @@ def logout():
 @routes.route("/create-account", methods=["GET", "POST"])
 def create_account():
     global logged_in
-
     form = CreateForm()
 
     if form.validate_on_submit():
@@ -185,7 +184,11 @@ def sell(ticker):
         flash(str(volume_form.stock_amount.data) + " " + ticker + " successfully sold for $" + str(price) + ".")
         return redirect(url_for('routes.portfolio'))
 
-    return render_template('sell_page.html', ticker=ticker, volume_form=volume_form)
+    return render_template(
+        'sell_page.html',
+        ticker=ticker,
+        volume_form=volume_form
+    )
 
 @routes.route("/portfolio")
 def portfolio():
@@ -212,7 +215,6 @@ def load_db():
 
 @routes.route("/create_stock", methods=["GET", "POST"])
 def create_stock():
-
     form = StockForm()
 
     if form.validate_on_submit():  #Adjust later to fulfill database needs
@@ -235,7 +237,6 @@ def create_stock():
 
 @routes.route("/add_funds", methods=["GET", "POST"])
 def add_funds():
-
     form = AddFundsForm()
 
     if form.validate_on_submit():  #Adjust later to fulfill database needs
@@ -254,7 +255,6 @@ def add_funds():
 
 @routes.route("/with_funds", methods=["GET", "POST"])
 def with_funds():
-
     form = WithFundsForm()
 
     if form.validate_on_submit() and current_user.balance >= form.withdraw_amount.data:  #Adjust later to fulfill database needs
