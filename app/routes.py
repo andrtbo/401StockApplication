@@ -6,7 +6,7 @@ from .forms import *
 routes = Blueprint('routes', __name__)
 
 # Variables 
-logged_in = True # Used to check if user is logged in. Change to "True" to access pages without logging in
+logged_in = False # Used to check if user is logged in. Change to "True" to access pages without logging in
 current_user = User() # User class to temporarily store the logged in user info
 
 # Functions
@@ -51,7 +51,7 @@ def dashboard():
     else:
         return render_template('dashboard.html')
 
-@routes.route("/login", methods=["GET", "POST"])
+@routes.route("/", methods=["GET", "POST"])
 def login():
     global current_user
     global logged_in
@@ -147,9 +147,12 @@ def sell(ticker):
 
     return render_template('sell_page.html', ticker=ticker, volume_form=volume_form)
 
-@routes.route("/")
+@routes.route("/portfolio")
 def portfolio():
     global logged_in
+    global current_user
+
+    current_user = User.query.filter_by(user_id = current_user.user_id).first()
 
     # Return to the login page if not logged in
     if not logged_in:
