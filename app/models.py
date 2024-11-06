@@ -7,6 +7,7 @@ class User(db.Model):
     last_name = db.Column(db.String(20))
     email = db.Column(db.String(100), unique = True, nullable = False)
     password = db.Column(db.String(255))
+    balance = db.Column(db.Float)
     admin = db.Column(db.Boolean)
 
 class Stock(db.Model):

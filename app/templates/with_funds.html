@@ -35,6 +35,7 @@
         {{ form.hidden_tag() }}
         <!-- Withdraw Amount field for form -->
         <p>
+            Current balance: ${{ balance }}<br>
             {{ form.withdraw_amount.label }}<br>
             {{ form.withdraw_amount() }}<br>
     

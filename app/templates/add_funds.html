@@ -35,6 +35,7 @@
         {{ form.hidden_tag() }}
         <!-- Deposit Amount field for form -->
         <p>
+            Current balance: ${{ balance }}<br>
             {{ form.deposit_amount.label }}<br>
             {{ form.deposit_amount() }}<br>
     
