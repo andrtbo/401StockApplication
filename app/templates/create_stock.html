@@ -60,15 +60,6 @@
                 <span style="color: red;">[{{ error }}]</span><br>
                 {% endfor %}
             </p>
-            <!-- Volume field for form -->
-            <p>
-                {{ form.volume_owned.label }}<br>
-                {{ form.volume_owned() }}<br>
-        
-                {% for error in form.volume_owned.errors %}
-                <span style="color: red;">[{{ error }}]</span><br>
-                {% endfor %}
-            </p>
              <!-- Market volume field for form -->
              <p>
                 {{ form.market_volume.label }}<br>

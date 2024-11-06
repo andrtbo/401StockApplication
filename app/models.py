@@ -13,7 +13,6 @@ class Stock(db.Model):
     stock_ticker = db.Column(db.String(5), primary_key=True)
     company_name = db.Column(db.String(255))
     market_price = db.Column(db.Float, nullable = False)
-    volume_owned = db.Column(db.Integer)
     market_volume = db.Column(db.Integer)
 
 class Portfolio(db.Model):
