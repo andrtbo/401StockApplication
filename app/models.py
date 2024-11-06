@@ -16,6 +16,12 @@ class Stock(db.Model):
     market_price = db.Column(db.Float, nullable = False)
     market_volume = db.Column(db.Integer)
 
+class OwnedStock(db.Model):
+    inventory_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey(User.user_id))
+    stock_ticker = db.Column(db.String(5), db.ForeignKey(Stock.stock_ticker))
+    volume_owned = db.Column(db.Integer)
+
 class Portfolio(db.Model):
     portfolio_id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey(User.user_id))
