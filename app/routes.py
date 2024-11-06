@@ -69,8 +69,8 @@ def login():
                 
                 # Sets the user as logged in and modifies the "current_user" object
                 logged_in = True
-                current_user = User(username = login_account.username, first_name = login_account.first_name, last_name = login_account.last_name, email = login_account.email, password = login_account.password, admin = login_account.admin)
-                return redirect(url_for('routes.dashboard'))
+                current_user = User.query.filter_by(username = form.username.data).first()
+                return redirect(url_for('routes.portfolio'))
             else: 
                 flash('The username or password is incorrect.')
         except AttributeError: # Flashes this message when an incorrect password causes an AttributeError
