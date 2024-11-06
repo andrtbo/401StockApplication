@@ -13,12 +13,12 @@
 
 <style>
     h1{
-        text-align: right;
+        text-align: center;
         font-size: large;
         color: blue;
     }
     h2{
-        text-align: right;
+        text-align: center;
         font-size: large;
         color: blue;
     }
@@ -29,21 +29,18 @@
 <div class="card mx-auto" style="width: 50rem;">
     <!-- Card nav tabs-->
     <div class="card-header">
-    
-    <ul class="nav nav-tabs card-header-tabs w-100">
-
-    <ul class="nav nav-tabs card-header-tabs w-100 justify-content-around">
-        <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('routes.add_funds') }}">Add Funds</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('routes.with_funds') }}">Withdraw Funds</a>
-        </li>
-        <li class="nav-item"></li>
-            <a class="nav-link" href="{{ url_for('routes.trans_history') }}">Transaction History</a>
-        </li>
-    </ul>
-</div>
+        <ul class="nav nav-pills card-header-pills w-100 justify-content-around">
+            <li class="nav-item">
+                <a class="nav-link active" href="{{ url_for('routes.add_funds') }}">Add Funds</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="{{ url_for('routes.with_funds') }}">Withdraw Funds</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="{{ url_for('routes.trans_history') }}">Transaction History</a>
+            </li>
+        </ul>
+    </div>
 <!-- Table for holding the stock data -->
 <table class="table table-hover">
     <!-- Table headings -->
