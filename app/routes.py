@@ -151,9 +151,9 @@ def buy(ticker):
 
     # The form.submit.data conditional is needed so the forms don't submit each other
     if volume_form.validate_on_submit(): # Re-renders the page with updated form data value
-        price = float("{:.2f}".format(volume_form.stock_amount.data * stock.market_price))
+        price = "{:.2f}".format(volume_form.stock_amount.data * stock.market_price)
         
-        if current_user.balance > price: 
+        if current_user.balance > float(price): 
             try: 
                 modify_stock.volume_owned = modify_stock.volume_owned + volume_form.stock_amount.data
             except AttributeError:
@@ -165,12 +165,12 @@ def buy(ticker):
                 db.session.add(modify_stock)
 
             modify_user = User.query.filter_by(user_id = current_user.user_id).first()
-            modify_user.balance = modify_user.balance - price
+            modify_user.balance = modify_user.balance - float(price)
             
-            record_transaction(ticker, volume_form.stock_amount.data, price)
+            record_transaction(ticker, volume_form.stock_amount.data, float(price))
 
             db.session.commit()
-            flash(str(volume_form.stock_amount.data) + " " + ticker + " successfully purchased for $" + str(price) + ".")
+            flash(str(volume_form.stock_amount.data) + " " + ticker + " successfully purchased for $" + price + ".")
             return redirect(url_for('routes.portfolio'))
         else: 
             flash('Transaction failed due to insufficient balance.')
@@ -204,19 +204,19 @@ def sell(ticker):
 
     # The form.submit.data conditional is needed so the forms don't submit each other
     if volume_form.validate_on_submit(): # Re-renders the page with updated form data value
-        price = float("{:.2f}".format(volume_form.stock_amount.data  * stock.market_price))
+        price = "{:.2f}".format(volume_form.stock_amount.data  * stock.market_price)
  
         if modify_stock.volume_owned >= volume_form.stock_amount.data:
             modify_stock = OwnedStock.query.filter_by(user_id = current_user.user_id).filter_by(stock_ticker = ticker).first()
             modify_stock.volume_owned = modify_stock.volume_owned - volume_form.stock_amount.data
 
             modify_user = User.query.filter_by(user_id = current_user.user_id).first()
-            modify_user.balance = modify_user.balance + price
+            modify_user.balance = modify_user.balance + float(price)
 
-            record_transaction(ticker, -volume_form.stock_amount.data, price)
+            record_transaction(ticker, -volume_form.stock_amount.data, float(price))
 
             db.session.commit()
-            flash(str(volume_form.stock_amount.data) + " " + ticker + " successfully sold for $" + str(price) + ".")
+            flash(str(volume_form.stock_amount.data) + " " + ticker + " successfully sold for $" + price + ".")
             return redirect(url_for('routes.portfolio'))
         else: 
             flash('Transaction failed due to insufficient shares.')
