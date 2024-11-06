@@ -3,7 +3,15 @@
 {% block title%}Transaction History{% endblock %}
 
 {% block content%}
- <!-- Table for holding the stock data -->
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+    {% for message in messages %}
+    <li class="list-group-item" style="color: green;">{{ message }}</li>
+    {% endfor %}
+{% endif %}
+{% endwith %}
+
+<!-- Table for holding the stock data -->
  <table class="table table-hover">
     <!-- Table headings -->
     <thead>
@@ -14,40 +22,18 @@
             <th scope="col" class="text-center">Volume Bought/Sold</th>
             <th scope="col" class="text-center">Price</th>
             <th scope="col" class="text-center">Date/Time</th>
-            <th scope="col" class="text-center"></th>
-            <th scope="col" class="text-center"></th>
         </tr>
     </thead>
+    {% for transaction in transactions %}
     <tbody class="table-group-divider">
-        <td class="text-center align-middle">3</th>
-        <td class="text-center my-auto align-middle">TEST</th>
-        <td class="text-center align-middle">Test Company</th>
-        <td class="text-center align-middle">+11</th>
-        <td class="text-center align-middle">$5.03</th>
-        <td class="text-center align-middle">10/20/2024 2:13 PM</th>
-        <td class="text-center align-middle">
-        </tbody>
-
-        <tbody class="table-group-divider">
-            <td class="text-center align-middle">2</th>
-            <td class="text-center my-auto align-middle">GLDF</th>
-            <td class="text-center align-middle">Goldfish</th>
-            <td class="text-center align-middle">+7</th>
-            <td class="text-center align-middle">$3.26</th>
-            <td class="text-center align-middle">10/20/2024 1:58 PM</th>
-            <td class="text-center align-middle">
-        </tbody>
-
-        <tbody class="table-group-divider">
-            <td class="text-center align-middle">1</th>
-            <td class="text-center my-auto align-middle">TSLA</th>
-            <td class="text-center align-middle">Tesla Motors</th>
-            <td class="text-center align-middle">+4</th>
-            <td class="text-center align-middle">$74.23</th>
-            <td class="text-center align-middle">10/20/2024 1:50 PM</th>
-            <td class="text-center align-middle">
-        </tbody>
-    </table>
+        <td class="text-center align-middle">{{ transaction.transaction_id }}</th>
+        <td class="text-center my-auto align-middle">{{ transaction.stock_ticker }}</th>
+        <td class="text-center align-middle">{{ transaction.company_name }}</th>
+        <td class="text-center align-middle">{{ transaction.purchase_volume }}</th>
+        <td class="text-center align-middle">${{ transaction.purchase_price }}</th>
+        <td class="text-center align-middle">{{ transaction.transaction_time }}</th>
+    </tbody>
+    {% endfor %} 
 {% endblock %}
 
 {% block footer%}{% endblock %}

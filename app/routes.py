@@ -2,6 +2,7 @@ from flask import Flask, render_template, redirect, url_for, flash, Blueprint
 from .extensions import db
 from .models import *
 from .forms import *
+import datetime
 
 routes = Blueprint('routes', __name__)
 
@@ -39,6 +40,19 @@ def unique_stock(input_stock):
                 return False
         except AttributeError:
             return True
+
+def record_transaction(ticker, volume, price):
+    timestamp = datetime.datetime.now().strftime("%m/%d/%Y %I:%M %p")
+
+    new_transaction = Transactions(
+        user_id = current_user.user_id,
+        stock_ticker = ticker,
+        purchase_price = price,
+        purchase_volume = volume,
+        transaction_time = timestamp
+    )
+
+    db.session.add(new_transaction)
 
 # Routes
 @routes.route("/dashboard")
@@ -152,6 +166,8 @@ def buy(ticker):
 
             modify_user = User.query.filter_by(user_id = current_user.user_id).first()
             modify_user.balance = modify_user.balance - price
+            
+            record_transaction(ticker, volume_form.stock_amount.data, price)
 
             db.session.commit()
             flash(str(volume_form.stock_amount.data) + " " + ticker + " successfully purchased for $" + str(price) + ".")
@@ -292,5 +308,7 @@ def market():
 
 @routes.route("/trans_history", methods=["GET", "POST"]) #Adjust later for database
 def trans_history():
+    transactions = Transactions.query.filter_by(user_id = current_user.user_id).all()
+    transactions.reverse()
 
-    return render_template('trans_history.html')
+    return render_template('trans_history.html', transactions = transactions)

@@ -35,6 +35,7 @@ class Transactions(db.Model):
     stock_ticker = db.Column(db.String(5), db.ForeignKey(Stock.stock_ticker))
     purchase_price = db.Column(db.Float)
     purchase_volume = db.Column(db.Integer)
+    transaction_time = db.Column(db.String(30))
 
 class MarketHours(db.Model):
     start_time = db.Column(db.Integer, primary_key=True)
