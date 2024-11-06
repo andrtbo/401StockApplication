@@ -3,6 +3,14 @@
 {% block title%}Portfolio{% endblock %}
 
 {% block content%}
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+    {% for message in messages %}
+    <li class="list-group-item" style="color: green;">{{ message }}</li>
+    {% endfor %}
+{% endif %}
+{% endwith %}
+
 <style>
     h1{
         text-align: right;
