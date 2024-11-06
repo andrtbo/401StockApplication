@@ -32,7 +32,6 @@ class SearchForm(FlaskForm):
 
 class AddFundsForm(FlaskForm): #Form to add funds to account
     deposit_amount = IntegerField('Deposit Amount', validators=[DataRequired()])
-    bank_number = IntegerField('Bank Account Number', validators=[DataRequired()])
     submit = SubmitField('Add Funds')
 
 class WithFundsForm(FlaskForm): #Form to withdrawal funds from account
