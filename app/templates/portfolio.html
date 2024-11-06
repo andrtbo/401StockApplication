@@ -24,7 +24,7 @@
     }
 </style>
 <h1>Stock Value: $415.40</h1>
-<h2>Current Balance: ${{ balance }}</h2>
+<h2>Current Balance: ${{ '%0.2f'| format(balance|float) }}</h2>
 
 <div class="card mx-auto" style="width: 50rem;">
     <!-- Card nav tabs-->

@@ -14,9 +14,9 @@
 </div>
 <div class="row">
     <div class="col">
-        <h2 >Test Company - TEST</h2>
-        <h4>${{ price }} per share</h4>
-        <h4>Current balance: ${{ balance }}</h4>
+        <h2 >{{ stock.company_name }} - {{ stock.stock_ticker }}</h2>
+        <h4>${{ '%0.2f'| format(stock.market_price | float) }} per share</h4>
+        <h4>Current balance: ${{ '%0.2f'| format(balance|float) }}</h4>
         <h4>Volume owned: {{ volume_owned }}</h4>
     </div>
     <div class="col">
@@ -39,10 +39,12 @@
                 </form>
 
                 <script>
+                    var price = {{ stock.market_price | tojson }}
+
                     function get_volume() {
                         var volume = document.getElementById('volume').value;
                         document.getElementById("volume_display").innerHTML = volume;
-                        document.getElementById("price_display").innerHTML = (volume * 5.03).toFixed(2);
+                        document.getElementById("price_display").innerHTML = (volume * price).toFixed(2);
                     }
                 </script>   
 
@@ -57,7 +59,7 @@
                           <h1 class="modal-title fs-5" id="exampleModalLabel">Confirm Transaction</h1>
                         </div>
                         <div class="modal-body" id="submitPrompt">
-                            <p>Would you like to sell <span id="volume_display"></span> {{ ticker }} for $<span id="price_display"></span> ?</p>
+                            <p>Would you like to sell <span id="volume_display"></span> {{ ticker }} for $<span id="price_display"></span>?</p>
                         </div>
                         <div class="modal-footer">
                           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>

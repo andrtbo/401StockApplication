@@ -178,7 +178,7 @@ def buy(ticker):
                 'buy_page.html',
                 ticker = ticker,
                 volume_form = volume_form,
-                price = stock.market_price,
+                stock = stock,
                 balance = current_user.balance
             )
 
@@ -191,7 +191,7 @@ def buy(ticker):
         'buy_page.html',
         ticker = ticker,
         volume_form = volume_form,
-        price = stock.market_price,
+        stock = stock,
         balance = current_user.balance,
         volume_owned = volume_owned
     )
@@ -224,7 +224,7 @@ def sell(ticker):
                 'sell_page.html',
                 ticker = ticker,
                 volume_form = volume_form,
-                price = stock.market_price,
+                stock = stock,
                 balance = current_user.balance
             )
 
@@ -237,7 +237,7 @@ def sell(ticker):
         'sell_page.html',
         ticker=ticker,
         volume_form=volume_form,
-        price = stock.market_price,
+        stock = stock,
         balance = current_user.balance,
         volume_owned = volume_owned
     )
