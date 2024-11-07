@@ -31,21 +31,52 @@
     </div>
     <!-- Card content -->
     <div class="card-body">
-    <form method="POST" action="">
+    <form method="POST" action="" id="submit_form">
         {{ form.hidden_tag() }}
         <!-- Deposit Amount field for form -->
         <p>
             Current balance: ${{ balance }}<br>
             {{ form.deposit_amount.label }}<br>
-            {{ form.deposit_amount() }}<br>
+            {{ form.deposit_amount(id="dep_amt") }}<br>
     
             {% for error in form.deposit_amount.errors %}
             <span style="color: red;">[{{ error }}]</span><br>
             {% endfor %}
         </p>
         <!-- Submit button -->
-        <p>{{ form.submit(onclick="return confirm('Are you sure you want to add funds?')") }}</p>
+     
     </form>
+
+    <script>
+
+        function get_volume() {
+            var deposit = document.getElementById('dep_amt').value;
+            document.getElementById("amount_display").innerHTML = deposit;
+        }
+
+    </script>
+
+
+    <button data-bs-toggle="modal" onclick="get_volume()" data-bs-target="#transaction">
+        Add Funds
+    </button>
+    
+    <div class="modal fade" id="transaction" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="exampleModalLabel">Confirm Transaction</h1>
+            </div>
+            <div class="modal-body" id="submitPrompt">
+                <p>Would you like to add $<span id="amount_display"></span> to your account?</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+              <button type="button" class="btn btn-primary" onclick="submit_form.submit()">Confirm</button>
+            </div>
+          </div>
+        </div>
+    </div>
     </div>
 </div>
 {% endblock %}
