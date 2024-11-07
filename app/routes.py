@@ -179,7 +179,8 @@ def buy(ticker):
                 ticker = ticker,
                 volume_form = volume_form,
                 stock = stock,
-                balance = current_user.balance
+                balance = current_user.balance,
+                volume_owned = volume_owned
             )
 
     try:
@@ -202,7 +203,7 @@ def sell(ticker):
     stock = Stock.query.filter_by(stock_ticker = ticker).first()
     modify_stock = OwnedStock.query.filter_by(user_id = current_user.user_id).filter_by(stock_ticker = ticker).first()
     try:
-        modify_stock = modify_stock.volume_owned + 0
+        modify_stock.volume_owned = modify_stock.volume_owned + 0
     except AttributeError:
         modify_stock = OwnedStock(volume_owned = 0)
 
@@ -229,7 +230,8 @@ def sell(ticker):
                 ticker = ticker,
                 volume_form = volume_form,
                 stock = stock,
-                balance = current_user.balance
+                balance = current_user.balance,
+                volume_owned = volume_owned
             )
 
     try:
