@@ -67,7 +67,7 @@
         <td class="text-center align-middle">{{ stock.volume_owned }}</th>
         <td class="text-center align-middle">${{ stock.market_price }}</th>
         <td class="text-center align-middle">${{'%0.2f'| format(stock.volume_owned * stock.market_price | float) }}</th>
-        <td class="text-center align-middle">${{ stock.market_value }}</th>
+        <td class="text-center align-middle">{{ stock.market_volume }}</th>
         <td class="text-center align-middle">${{'%0.2f'| format(stock.market_volume * stock.market_price | float) }}</th>
         <td class="text-center align-middle">
             <a class="btn btn-secondary" role="button" href="{{ url_for('routes.buy', ticker = stock.stock_ticker) }}">Buy</button>
