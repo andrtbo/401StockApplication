@@ -166,6 +166,7 @@ def buy(ticker):
 
             modify_user = User.query.filter_by(user_id = current_user.user_id).first()
             modify_user.balance = modify_user.balance - float(price)
+            stock.market_volume = stock.market_volume + volume_form.stock_amount.data
             
             record_transaction(ticker, volume_form.stock_amount.data, float(price))
 
@@ -217,6 +218,7 @@ def sell(ticker):
 
             modify_user = User.query.filter_by(user_id = current_user.user_id).first()
             modify_user.balance = modify_user.balance + float(price)
+            stock.market_volume = stock.market_volume - volume_form.stock_amount.data
 
             record_transaction(ticker, -volume_form.stock_amount.data, float(price))
 
@@ -254,6 +256,12 @@ def portfolio():
     global current_user
 
     current_user = User.query.filter_by(user_id = current_user.user_id).first()
+    portfolio = OwnedStock.query.\
+        join(Stock, OwnedStock.stock_ticker == Stock.stock_ticker).\
+        filter(OwnedStock.user_id == current_user.user_id).\
+        add_columns(OwnedStock.stock_ticker, Stock.company_name, OwnedStock.volume_owned, Stock.market_price, Stock.market_volume).\
+        order_by(OwnedStock.volume_owned).\
+        all()
 
     # Return to the login page if not logged in
     if not logged_in:
@@ -262,7 +270,8 @@ def portfolio():
     else:
         return render_template(
             'portfolio.html',
-            balance = current_user.balance
+            balance = current_user.balance,
+            portfolio = portfolio
         )
 
 @routes.route("/load-db")
@@ -364,7 +373,7 @@ def trans_history(page):
         page_count = len(transactions) // 10
 
     page_transactions = transactions[(page-1)*10:page*10]
-    
+
     return render_template(
         'trans_history.html',
         transactions = page_transactions,

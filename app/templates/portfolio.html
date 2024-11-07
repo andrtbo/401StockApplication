@@ -50,54 +50,34 @@
             <th scope="col" class="text-center">Company</th>
             <th scope="col" class="text-center">Today's Change</th>
             <th scope="col" class="text-center">Volume Owned</th>
-            <th scope="col" class="text-center">Price</th>
-            <th scope="col" class="text-center">Total Value</th>
+            <th scope="col" class="text-center">Stock Price</th>
+            <th scope="col" class="text-center">Stock Value</th>
+            <th scope="col" class="text-center">Market Volume</th>
+            <th scope="col" class="text-center">Market Cap</th>
             <th scope="col" class="text-center"></th>
             <th scope="col" class="text-center"></th>
         </tr>
     </thead>
+    {% for stock in portfolio %}
+    {% if stock.volume_owned > 0 %}
     <tbody class="table-group-divider">
-        <td class="text-center my-auto align-middle">TEST</th>
-        <td class="text-center align-middle">Test Company</th>
-        <td class="text-center align-middle">-0.57%</th>
-        <td class="text-center align-middle">11</th>
-        <td class="text-center align-middle">$5.03</th>
-        <td class="text-center align-middle">$55.33</th>
+        <td class="text-center my-auto align-middle">{{ stock.stock_ticker }}</th>
+        <td class="text-center align-middle">{{ stock.company_name }}</th>
+        <td class="text-center align-middle">0</th>
+        <td class="text-center align-middle">{{ stock.volume_owned }}</th>
+        <td class="text-center align-middle">${{ stock.market_price }}</th>
+        <td class="text-center align-middle">${{'%0.2f'| format(stock.volume_owned * stock.market_price | float) }}</th>
+        <td class="text-center align-middle">${{ stock.market_value }}</th>
+        <td class="text-center align-middle">${{'%0.2f'| format(stock.market_volume * stock.market_price | float) }}</th>
         <td class="text-center align-middle">
-            <a class="btn btn-secondary" role="button" href="{{ url_for('routes.buy', ticker = 'TSLA') }}">Buy</button>
+            <a class="btn btn-secondary" role="button" href="{{ url_for('routes.buy', ticker = stock.stock_ticker) }}">Buy</button>
         </th>
         <td class="text-center align-middle">
-            <a class="btn btn-secondary" role="button" href="{{ url_for('routes.sell', ticker = 'TSLA') }}">Sell</button>
+            <a class="btn btn-secondary" role="button" href="{{ url_for('routes.sell', ticker = stock.stock_ticker) }}">Sell</button>
         </th>
     </tbody>
-    <tbody class="table-group-divider">
-        <td class="text-center my-auto align-middle">TSLA</th>
-        <td class="text-center align-middle">Tesla Motors</th>
-        <td class="text-center align-middle">+3.12%</th>
-        <td class="text-center align-middle">4</th>
-        <td class="text-center align-middle">$74.23</th>
-        <td class="text-center align-middle">$296.92</th>
-        <td class="text-center align-middle">
-            <a class="btn btn-secondary" role="button" href="{{ url_for('routes.buy', ticker = 'TSLA') }}">Buy</button>
-        </th>
-        <td class="text-center align-middle">
-            <a class="btn btn-secondary" role="button" href="{{ url_for('routes.sell', ticker = 'TSLA') }}">Sell</button>
-        </th>
-    </tbody>
-    <tbody class="table-group-divider">
-        <td class="text-center my-auto align-middle">GLDF</th>
-        <td class="text-center align-middle">Goldfish</th>
-        <td class="text-center align-middle">+8.35%</th>
-        <td class="text-center align-middle">7</th>
-        <td class="text-center align-middle">$3.26</th>
-        <td class="text-center align-middle">$22.82</th>
-        <td class="text-center align-middle">
-            <a class="btn btn-secondary" role="button" href="{{ url_for('routes.buy', ticker = 'TSLA') }}">Buy</button>
-        </th>
-        <td class="text-center align-middle">
-            <a class="btn btn-secondary" role="button" href="{{ url_for('routes.sell', ticker = 'TSLA') }}">Sell</button>
-        </th>
-    </tbody>
+    {% endif %}
+    {% endfor %}
 {% endblock %}
 
 {% block footer%}{% endblock %}

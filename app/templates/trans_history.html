@@ -40,7 +40,6 @@
     {% endfor %}
 
 <ul class="pagination fixed-bottom justify-content-center">
-    <!-- Will finish this later -Andrew -->
     {% if page > 1%}
     <li class="page-item"><a class="page-link" href="{{ url_for('routes.trans_history', page = 1) }}">&lt&lt</a></li>
     <li class="page-item"><a class="page-link" href="{{ url_for('routes.trans_history', page = page - 1) }}">&lt</a></li>
