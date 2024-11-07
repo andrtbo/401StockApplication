@@ -348,13 +348,26 @@ def market():
 
     return render_template('market.html', form=form)
 
-@routes.route("/trans_history", methods=["GET", "POST"]) #Adjust later for database
-def trans_history():
+@routes.route("/transaction_history/<int:page>", methods=["GET", "POST"]) 
+def trans_history(page):
     transactions = Transactions.query.\
         join(Stock, Transactions.stock_ticker == Stock.stock_ticker).\
         filter(Transactions.user_id == current_user.user_id).\
         add_columns(Transactions.transaction_id, Transactions.stock_ticker, Transactions.purchase_price, Transactions.purchase_volume, Transactions.transaction_time, Stock.company_name).\
+        order_by(Transactions.transaction_id).\
         all()
     transactions.reverse()
 
-    return render_template('trans_history.html', transactions = transactions)
+    if len(transactions) < 10:
+        page_count = 1
+    else:
+        page_count = len(transactions) // 10
+
+    page_transactions = transactions[(page-1)*10:page*10]
+    
+    return render_template(
+        'trans_history.html',
+        transactions = page_transactions,
+        page = page,
+        page_count = page_count
+    )

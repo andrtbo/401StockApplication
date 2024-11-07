@@ -12,7 +12,7 @@
 {% endwith %}
 
 <!-- Table for holding the stock data -->
- <table class="table table-hover">
+<table class="table table-hover">
     <!-- Table headings -->
     <thead>
         <tr>
@@ -31,13 +31,45 @@
         <td class="text-center align-middle">{{ transaction.company_name }}</th>
         <td class="text-center align-middle">{{ transaction.purchase_volume }}</th>
         {% if transaction.purchase_volume > 0 %}
-            <td class="text-center align-middle">+${{ '%0.2f'| format(transaction.purchase_price|float) }}</th>
+            <td class="text-center align-middle">-${{ '%0.2f'| format(transaction.purchase_price|float) }}</th>
         {% else %}
-            <td class="text-center align-middle">-${{ transaction.purchase_price }}</th>  
+            <td class="text-center align-middle">+${{ transaction.purchase_price }}</th>  
         {% endif %}
         <td class="text-center align-middle">{{ transaction.transaction_time }}</th>
     </tbody>
-    {% endfor %} 
+    {% endfor %}
+
+<ul class="pagination fixed-bottom justify-content-center">
+    <!-- Will finish this later -Andrew -->
+    {% if page > 1%}
+    <li class="page-item"><a class="page-link" href="{{ url_for('routes.trans_history', page = 1) }}">&lt&lt</a></li>
+    <li class="page-item"><a class="page-link" href="{{ url_for('routes.trans_history', page = page - 1) }}">&lt</a></li>
+    {% endif %}
+
+    {% if page_count > 2 %}
+    {% for num in range(page_count) %}
+    <li class="page-item"><a class="page-link" href="{{ url_for('routes.trans_history', page =  num + 1) }}">{{ num + 1 }}</a></li>
+    {% endfor %}
+    {% elif page_count > 2 %}
+    <li class="page-item"><a class="page-link" href="{{ url_for('routes.trans_history', page = page) }}">{{ page - 1 }}</a></li>
+    <li class="page-item"><a class="page-link" href="{{ url_for('routes.trans_history', page = page + 1) }}">{{ page - 2 }}</a></li>
+    <li class="page-item"><a class="page-link" href="{{ url_for('routes.trans_history', page = page + 2) }}">{{ page }}</a></li>
+    <li class="page-item"><a class="page-link" href="{{ url_for('routes.trans_history', page = page + 1) }}">{{ page + 1 }}</a></li>
+    <li class="page-item"><a class="page-link" href="{{ url_for('routes.trans_history', page = page + 2) }}">{{ page + 2 }}</a></li>
+    {% else %}
+    <li class="page-item"><a class="page-link" href="{{ url_for('routes.trans_history', page = 1) }}">1</a></li>
+    <li class="page-item"><a class="page-link" href="{{ url_for('routes.trans_history', page = 2) }}">2</a></li>
+    <li class="page-item"><a class="page-link" href="{{ url_for('routes.trans_history', page = 3) }}">3</a></li>
+    <li class="page-item"><a class="page-link" href="{{ url_for('routes.trans_history', page = 4) }}">4</a></li>
+    <li class="page-item"><a class="page-link" href="{{ url_for('routes.trans_history', page = 5) }}">5</a></li>
+    {% endif %}
+
+    {% if page_count > page %}
+    <li class="page-item"><a class="page-link" href="{{ url_for('routes.trans_history', page = page + 1) }}">&gt</a></li>
+    <li class="page-item"><a class="page-link" href="{{ url_for('routes.trans_history', page = page + 1) }}">&gt&gt</a></li>
+    {% endif %}
+</ul>
+
 {% endblock %}
 
-{% block footer%}{% endblock %}
+{% block footer%}{% endblock %} 
