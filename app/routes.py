@@ -109,7 +109,7 @@ def buy(ticker):
     modify_stock = OwnedStock.query.filter_by(user_id = current_user.user_id).filter_by(stock_ticker = ticker).first()
 
     if volume_form.validate_on_submit() and (check_hours(current_hours) == False):
-        flash('Transactions unavailable during market hours.')
+        flash('Transactions unavailable outside of market hours.')
         return redirect(url_for('routes.portfolio'))
     elif volume_form.validate_on_submit():
         price = "{:.2f}".format(volume_form.stock_amount.data * stock.market_price)
@@ -171,7 +171,7 @@ def sell(ticker):
         modify_stock = OwnedStock(volume_owned = 0)
 
     if volume_form.validate_on_submit() and (check_hours(current_hours) == False):
-        flash('Transactions unavailable during market hours.')
+        flash('Transactions unavailable outside of market hours.')
         return redirect(url_for('routes.portfolio'))
     elif volume_form.validate_on_submit():
         price = "{:.2f}".format(volume_form.stock_amount.data  * stock.market_price)
