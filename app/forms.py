@@ -1,7 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, FloatField, IntegerField
+from wtforms import StringField, SubmitField, FloatField, IntegerField, SelectField
 from wtforms.validators import DataRequired, Email
-from markupsafe import Markup
 
 from .extensions import db
 
@@ -38,11 +37,15 @@ class WithFundsForm(FlaskForm): #Form to withdrawal funds from account
     withdraw_amount = IntegerField('Withdraw Amount', validators=[DataRequired()])
     submit = SubmitField('Withdraw Funds')
 
-class MarketHours(FlaskForm): #Form to set market hours for application
-    start_time = IntegerField('Start Time (1-24)', validators = [DataRequired()])
-    end_time = IntegerField('End Time (1-24)', validators = [DataRequired()])
-    start_day = StringField('Start Day', validators = [DataRequired()])
-    end_day = StringField('End Day', validators = [DataRequired()])
+class MarketForm(FlaskForm): #Form to set market hours for application
+    start_time = SelectField(choices=[('12', '12:00'), ('1', '1:00'), ('2', '2:00'), ('3', '3:00'), ('4', '4:00'), ('5', '5:00'), ('6', '6:00'), ('7', '7:00'), ('8', '8:00'), ('9', '9:00'), ('10', '10:00'), ('11', '11:00')])
+    XM_1 = SelectField(choices=[('AM', 'AM'), ('PM', 'PM')])
+    end_time = SelectField(choices=[('12', '12:00'), ('1', '1:00'), ('2', '2:00'), ('3', '3:00'), ('4', '4:00'), ('5', '5:00'), ('6', '6:00'), ('7', '7:00'), ('8', '8:00'), ('9', '9:00'), ('10', '10:00'), ('11', '11:00')])
+    XM_1 = SelectField(choices=[('AM', 'AM'), ('PM', 'PM')])
+    XM_2 = SelectField(choices=[('AM', 'AM'), ('PM', 'PM')])
+    start_day = SelectField(choices=[('Monday', 'Monday'), ('Tuesday', 'Tuesday'), ('Wednesday', 'Wednesday'), ('Thursday', 'Thursday'), ('Friday', 'Friday'), ('Saturday', 'Saturday'), ('Sunday', 'Sunday')])
+    end_day = SelectField(choices=[('Monday', 'Monday'), ('Tuesday', 'Tuesday'), ('Wednesday', 'Wednesday'), ('Thursday', 'Thursday'), ('Friday', 'Friday'), ('Saturday', 'Saturday'), ('Sunday', 'Sunday')])
+    submit = SubmitField()
 
 class TransactionForm(FlaskForm): # Takes input for the volume of stock to be bought/sold
     stock_amount = IntegerField('Volume', validators=[DataRequired()])

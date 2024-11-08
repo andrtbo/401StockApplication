@@ -38,7 +38,7 @@ class Transactions(db.Model):
     transaction_time = db.Column(db.String(30))
 
 class MarketHours(db.Model):
-    start_time = db.Column(db.Integer, primary_key=True)
-    end_time = db.Column(db.Integer)
+    start_time = db.Column(db.String(10), primary_key=True)
+    end_time = db.Column(db.String(10))
     start_day = db.Column(db.String(10))
     end_day = db.Column(db.String(10))

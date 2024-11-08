@@ -2,6 +2,7 @@ from flask import Flask, render_template, redirect, url_for, flash, Blueprint
 from .extensions import db
 from .models import *
 from .forms import *
+from .functions import *
 import datetime
 
 routes = Blueprint('routes', __name__)
@@ -9,50 +10,7 @@ routes = Blueprint('routes', __name__)
 # Variables 
 logged_in = False # Used to check if user is logged in. Change to "True" to access pages without logging in
 current_user = User() # User class to temporarily store the logged in user info
-
-# Functions
-def test_unique(input_user): # Checks to see if a created account's username or password are unique 
-    try: 
-        test_user = User.query.filter_by(username = input_user.username).first()
-        if test_user.username == input_user.username:
-            flash("This username is already in use.")
-            return False
-    except AttributeError:
-        try:
-            test_user = User.query.filter_by(email = input_user.email).first()
-            if test_user.email == input_user.email:
-                flash("This email is already in use.")
-                return False
-        except AttributeError:
-            return True
-
-def unique_stock(input_stock):
-    try:
-        test_stock = Stock.query.filter_by(stock_ticker = input_stock.stock_ticker).first()
-        if test_stock.stock_ticker == input_stock.stock_ticker:
-            flash("This stock ticker is already in use.")
-            return False
-    except AttributeError:
-        try:
-            test_stock = Stock.query.filter_by(company_name = input_stock.company_name).first()
-            if test_stock.company_name == input_stock.company_name:
-                flash("The company name is already in use.")
-                return False
-        except AttributeError:
-            return True
-
-def record_transaction(ticker, volume, price):
-    timestamp = datetime.datetime.now().strftime("%m/%d/%Y %I:%M %p")
-
-    new_transaction = Transactions(
-        user_id = current_user.user_id,
-        stock_ticker = ticker,
-        purchase_price = price,
-        purchase_volume = volume,
-        transaction_time = timestamp
-    )
-
-    db.session.add(new_transaction)
+current_hours = MarketHours() # Define current_hours here so it can be used globally for a function
 
 # Routes
 @routes.route("/dashboard")
@@ -147,10 +105,13 @@ def stocks():
 def buy(ticker):
     volume_form = TransactionForm()
     stock = Stock.query.filter_by(stock_ticker = ticker).first()
+    current_hours = MarketHours.query.first() 
     modify_stock = OwnedStock.query.filter_by(user_id = current_user.user_id).filter_by(stock_ticker = ticker).first()
 
-    # The form.submit.data conditional is needed so the forms don't submit each other
-    if volume_form.validate_on_submit(): # Re-renders the page with updated form data value
+    if volume_form.validate_on_submit() and (check_hours(current_hours) == False):
+        flash('Transactions unavailable during market hours.')
+        return redirect(url_for('routes.portfolio'))
+    elif volume_form.validate_on_submit():
         price = "{:.2f}".format(volume_form.stock_amount.data * stock.market_price)
         
         if current_user.balance > float(price): 
@@ -168,7 +129,7 @@ def buy(ticker):
             modify_user.balance = modify_user.balance - float(price)
             stock.market_volume = stock.market_volume + volume_form.stock_amount.data
             
-            record_transaction(ticker, volume_form.stock_amount.data, float(price))
+            record_transaction(ticker, volume_form.stock_amount.data, float(price), current_user)
 
             db.session.commit()
             flash(str(volume_form.stock_amount.data) + " " + ticker + " successfully purchased for $" + price + ".")
@@ -181,7 +142,7 @@ def buy(ticker):
                 volume_form = volume_form,
                 stock = stock,
                 balance = current_user.balance,
-                volume_owned = volume_owned
+                volume_owned = modify_stock.volume_owned
             )
 
     try:
@@ -202,14 +163,17 @@ def buy(ticker):
 def sell(ticker):
     volume_form = TransactionForm()
     stock = Stock.query.filter_by(stock_ticker = ticker).first()
+    current_hours = MarketHours.query.first() 
     modify_stock = OwnedStock.query.filter_by(user_id = current_user.user_id).filter_by(stock_ticker = ticker).first()
     try:
         modify_stock.volume_owned = modify_stock.volume_owned + 0
     except AttributeError:
         modify_stock = OwnedStock(volume_owned = 0)
 
-    # The form.submit.data conditional is needed so the forms don't submit each other
-    if volume_form.validate_on_submit(): # Re-renders the page with updated form data value
+    if volume_form.validate_on_submit() and (check_hours(current_hours) == False):
+        flash('Transactions unavailable during market hours.')
+        return redirect(url_for('routes.portfolio'))
+    elif volume_form.validate_on_submit():
         price = "{:.2f}".format(volume_form.stock_amount.data  * stock.market_price)
  
         if modify_stock.volume_owned >= volume_form.stock_amount.data:
@@ -220,7 +184,7 @@ def sell(ticker):
             modify_user.balance = modify_user.balance + float(price)
             stock.market_volume = stock.market_volume - volume_form.stock_amount.data
 
-            record_transaction(ticker, -volume_form.stock_amount.data, float(price))
+            record_transaction(ticker, -volume_form.stock_amount.data, float(price), current_user)
 
             db.session.commit()
             flash(str(volume_form.stock_amount.data) + " " + ticker + " successfully sold for $" + price + ".")
@@ -233,7 +197,7 @@ def sell(ticker):
                 volume_form = volume_form,
                 stock = stock,
                 balance = current_user.balance,
-                volume_owned = volume_owned
+                volume_owned = modify_stock.volume_owned
             )
 
     try:
@@ -346,16 +310,40 @@ def with_funds():
     )
 
 @routes.route("/market", methods=["GET", "POST"])
-def market(): 
-    form = MarketHours()
+def market():
+    global current_hours
+    current_hours = MarketHours.query.first() # There's only one time in the market_hours table so this is fine
+    form = MarketForm( # Set the default select fields to be the current market hours
+        start_time = current_hours.start_time[:-6],
+        XM_1 = current_hours.start_time[-2:],
+        end_time = current_hours.end_time[:-6],
+        XM_2 = current_hours.end_time[-2:],
+        start_day = current_hours.start_day,
+        end_day = current_hours.end_day
+    )
     
-    if form.validate_on_submit():  #Adjust later to fulfill database needs
-        flash('The market hours have been adjusted')
-        return redirect(url_for('routes.market'))
+    if form.validate_on_submit():  
+        # Assembles strings for the start/end times
+        start_time = str(form.start_time.data + ":00 " + form.XM_1.data)
+        end_time = str(form.end_time.data + ":00 " + form.XM_2.data)
 
-    new_hours = MarketHours(start_time = form.start_time.data, end_time = form.end_time.data, start_day = form.start_day.data, end_day = form.end_day.data)
+        # Validates that the start time is before the end time
+        if time_conv(start_time) > time_conv(end_time):
+            flash('Start time cannot be after end time.')
+            return render_template('market.html', form=form, current_hours=current_hours)
+        else:
+            flash('Market hours updated successfully.')
 
-    return render_template('market.html', form=form)
+        # Store the new times/days in the database
+        current_hours.start_time = start_time
+        current_hours.end_time = end_time
+        current_hours.start_day = form.start_day.data
+        current_hours.end_day = form.end_day.data
+        db.session.commit()
+
+        return render_template('market.html', form=form, current_hours=current_hours)
+    
+    return render_template('market.html', form=form, current_hours=current_hours)
 
 @routes.route("/transaction_history/<int:page>", methods=["GET", "POST"]) 
 def trans_history(page):
