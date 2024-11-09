@@ -63,11 +63,11 @@
 
   <!-- Market hours statement -->
   {% if current_hours.start_time == current_hours.end_time and current_hours.start_day == current_hours.end_day %}
-  <h1>Current market hours: Open 24/7</h1>
+  <h1>Current market hours: Open all day on {{ current_hours.start_day }}</h1>
   {% elif current_hours.start_time == current_hours.end_time %}
   <h1>Current market hours: Open all day on {{ current_hours.start_day }} through {{ current_hours.end_day }}</h1>
   {% elif current_hours.start_day == current_hours.end_day %}
-  <h1>Current market hours: Open from {{ current_hours.start_time }} to {{ current_hours.end_time }} every day</h1>
+  <h1>Current market hours: Open from {{ current_hours.start_time }} to {{ current_hours.end_time }} on {{ current_hours.start_day }}</h1>
   {% else %}
   <h1>Current market hours: Open from {{ current_hours.start_time }} to {{ current_hours.end_time }} on {{ current_hours.start_day }} through {{ current_hours.end_day }}</h1>
   {% endif %}
