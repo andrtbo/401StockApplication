@@ -1,4 +1,6 @@
 import datetime
+from datetime import datetime
+import random
 from flask import flash
 from .models import *
 
@@ -33,7 +35,7 @@ def unique_stock(input_stock):
             return True
 
 def record_transaction(ticker, volume, price, current_user):
-    timestamp = datetime.datetime.now().strftime("%m/%d/%Y %I:%M %p")
+    timestamp = datetime.now().strftime("%m/%d/%Y %I:%M %p")
 
     new_transaction = Transactions(
         user_id = current_user.user_id,
@@ -91,8 +93,8 @@ def check_hours(current_hours):
     end_day = day_conv(current_hours.end_day)
 
     # Get the current time and day with the same integer mappings
-    current_time = time_conv(datetime.datetime.now().strftime('%I:%M %p')[1:])
-    current_day = datetime.datetime.today().weekday()
+    current_time = time_conv(datetime.now().strftime('%I:%M %p')[1:])
+    current_day = datetime.today().weekday()
 
     # Check if the current time is outside of operating hours
     if start_time != end_time and (start_time > current_time or current_time > end_time): 
@@ -103,3 +105,19 @@ def check_hours(current_hours):
         return(False)
 
     return(True)
+
+def update_stock():
+    stocks = Stock.query.all()
+
+    last_updated = LastUpdated.query.first()
+    last_dt = datetime.strptime(last_updated.time, '%Y-%m-%d %H:%M:%S')
+    current_dt = datetime.now()
+    delta = current_dt - last_dt
+
+    if delta.total_seconds() > 300:
+        for stock in stocks:
+            flux = random.uniform(-0.05, 0.05)
+            stock.market_price = float("{:.2f}".format(stock.market_price * (1 + flux)))
+
+            last_updated.time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            db.session.commit()

@@ -2,6 +2,7 @@ from flask import Flask
 
 from .extensions import db
 from .routes import routes
+from .functions import update_stock
 
 def create_app():
     app = Flask(__name__)
@@ -15,5 +16,6 @@ def create_app():
 
     with app.app_context():
         db.create_all()
+        update_stock()
 
     return app

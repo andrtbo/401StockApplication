@@ -103,6 +103,8 @@ def stocks():
     
 @routes.route("/buy/<string:ticker>", methods=["GET", "POST"])
 def buy(ticker):
+    update_stock()
+
     volume_form = TransactionForm()
     stock = Stock.query.filter_by(stock_ticker = ticker).first()
     current_hours = MarketHours.query.first() 
@@ -161,6 +163,8 @@ def buy(ticker):
 
 @routes.route("/sell/<string:ticker>", methods=["GET", "POST"]) # Same notes from /buy apply
 def sell(ticker):
+    update_stock()
+
     volume_form = TransactionForm()
     stock = Stock.query.filter_by(stock_ticker = ticker).first()
     current_hours = MarketHours.query.first() 
@@ -218,6 +222,8 @@ def sell(ticker):
 def portfolio():
     global logged_in
     global current_user
+
+    update_stock()
 
     current_user = User.query.filter_by(user_id = current_user.user_id).first()
     portfolio = OwnedStock.query.\

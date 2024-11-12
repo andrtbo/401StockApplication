@@ -42,3 +42,6 @@ class MarketHours(db.Model):
     end_time = db.Column(db.String(10))
     start_day = db.Column(db.String(10))
     end_day = db.Column(db.String(10))
+
+class LastUpdated(db.Model):
+    time = db.Column(db.String(50), primary_key=True)
