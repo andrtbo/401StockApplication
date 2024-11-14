@@ -7,7 +7,7 @@
     {% with messages = get_flashed_messages() %}
     {% if messages %}
         {% for message in messages %}
-        {% set msg, color = message.split(';') %}
+        {% set msg = message.split(';') %}
         <a style="color: {{ msg[1] }};" href="{{ url_for('routes.buy', ticker = ticker) }}">{{ msg[0] }}</br>Would you like to buy stock?</a>
         {% endfor %}
     {% endif %}

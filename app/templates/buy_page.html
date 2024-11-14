@@ -13,6 +13,13 @@
     {% endif %}
     {% endwith %}
 </div>
+
+<style>
+    #live_total {
+        display: none;
+    }
+</style>
+
 <div class="row">
     <div class="col">
         <h2 >{{ stock.company_name }} - {{ stock.stock_ticker }}</h2>
@@ -32,6 +39,9 @@
                     <p>
                         How much {{ ticker }} would you like to purchase?<br>
                         {{ volume_form.stock_amount(value=1, id="volume", onkeyup="get_volume()") }}<br> 
+                        <div id="live_total">
+                            <p>Price for <span id="live_volume"></span> {{ ticker }}: $<span id="live_price"></span></p>
+                        </div>
 
                         {% for error in volume_form.stock_amount.errors %}
                         <span style="color: red;">[{{ error }}]</span><br   >
@@ -43,7 +53,12 @@
                     var price = '{{ stock.market_price | tojson }}'
 
                     function get_volume() {
+                        var live_total = document.getElementById('live_total');
+                        live_total.style.display = "block";
+
                         var volume = document.getElementById('volume').value;
+                        document.getElementById("live_volume").innerHTML = volume;
+                        document.getElementById("live_price").innerHTML = (volume * price).toFixed(2);
                         document.getElementById("volume_display").innerHTML = volume;
                         document.getElementById("price_display").innerHTML = (volume * price).toFixed(2);
                     }
