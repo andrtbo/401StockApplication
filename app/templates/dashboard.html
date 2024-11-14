@@ -29,17 +29,24 @@
     <!-- Table headings -->
     <thead>
         <tr>
-            <th scope="col" class="text-center">No.</th>
             <th scope="col" class="text-center">Ticker</th>
             <th scope="col" class="text-center">Company</th>
+            <th scope="col" class="text-center">Market Price</th>
             <th scope="col" class="text-center">Market Volume</th>
-            <th scope="col" class="text-center">Graph</th>
-            <th scope="col" class="text-center">Price</th>
-            <th scope="col" class="text-center"></th>
             <th scope="col" class="text-center"></th>
         </tr>
     </thead>
+    {% for stock in stock %}
+    {% if stock.market_volume > 0 %}
     <tbody class="table-group-divider">
+        <td class="text-center my-auto align-middle">{{ stock.stock_ticker }}</th>
+        <td class="text-center align-middle">{{ stock.company_name }}</th>
+        <td class="text-center align-middle">${{ '%0.2f'| format(stock.market_price | float) }}</th>
+        <td class="text-center align-middle">{{ stock.market_volume }}</th>
+    </tbody>
+    {% endif %}
+    {% endfor %}
+   <!-- <tbody class="table-group-divider">
         <td class="text-center my-auto align-middle">1</th>
         <td class="text-center my-auto align-middle">TEST</th>
         <td class="text-center align-middle">Test Company</th>
@@ -178,7 +185,7 @@
         <td class="text-center align-middle">
             <a class="btn btn-secondary" role="button" href="#">Remove</button>
         </th>
-    </tbody>
+    </tbody>-->
 </table>
 {% endblock %}
 

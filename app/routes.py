@@ -19,7 +19,12 @@ s_transactions = []
 @routes.route("/dashboard")
 @login_required
 def dashboard():
-    return render_template('dashboard.html')
+    
+    stock = Stock.query.\
+        all()
+
+    return render_template('dashboard.html',stock=stock)
+
 
 @routes.route("/", methods=["GET", "POST"]) # Login
 def login():
@@ -85,8 +90,13 @@ def create_account():
 @routes.route("/stocks", methods=["GET", "POST"]) 
 @login_required
 def stocks():
+    stock = Stock.query.\
+        join(OwnedStock, Stock.stock_ticker == OwnedStock.stock_ticker, isouter=True).\
+        add_columns(Stock.market_price, Stock.market_volume, OwnedStock.volume_owned, Stock.stock_ticker, Stock.company_name).\
+        all()
+
     form = SearchForm()
-    return render_template('stocks.html', form=form)
+    return render_template('stocks.html', form=form, stock=stock)
     
 @routes.route("/buy/<string:ticker>", methods=["GET", "POST"])
 @login_required
@@ -234,6 +244,7 @@ def portfolio():
 @routes.route("/create_stock", methods=["GET", "POST"])
 @login_required
 def create_stock():
+
     form = StockForm()
 
     if form.validate_on_submit():  #Adjust later to fulfill database needs
