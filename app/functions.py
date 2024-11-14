@@ -121,3 +121,14 @@ def update_stock():
 
             last_updated.time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             db.session.commit()
+
+def paginate(transactions, page):
+    if len(transactions) < 10:
+        page_count = 1
+    else:
+        page_count = len(transactions) // 10 + 1
+
+    page_transactions = transactions[(page-1)*10:page*10]
+    
+    return page_count, page_transactions
+

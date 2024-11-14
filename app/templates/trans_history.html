@@ -12,6 +12,21 @@
 {% endif %}
 {% endwith %}
 
+<!-- Secondary search navbar -->
+<nav class="navbar navbar-expand-lg" style="background-color: #6c7075;">
+    <div class="container-fluid">
+        <form class="d-flex" method="POST" action="" role="search">
+            {{ form.hidden_tag() }}
+            <div class="mr-auto p-2">
+                {{ form.search(type="search", class="form-control me-2", placeholder="Search transactions") }}
+            </div>
+            <div class="p-2">
+                {{ form.submit(class="btn btn-light", type="submit", value="Submit") }}
+            </div>
+        </form>
+    </div>
+</nav>
+
 <!-- Table for holding the stock data -->
 <table class="table table-hover">
     <!-- Table headings -->
@@ -25,6 +40,7 @@
             <th scope="col" class="text-center">Date/Time</th>
         </tr>
     </thead>
+    <!-- Loop through transactions-->
     {% for transaction in transactions %}
     <tbody class="table-group-divider">
         <td class="text-center align-middle">{{ transaction.transaction_id }}</th>
@@ -40,28 +56,19 @@
     </tbody>
     {% endfor %}
 
+<!-- Pagination abomination -->
 <ul class="pagination fixed-bottom justify-content-center">
     {% if page > 1%}
     <li class="page-item"><a class="page-link" href="{{ url_for('routes.trans_history', page = 1) }}">&lt&lt</a></li>
     <li class="page-item"><a class="page-link" href="{{ url_for('routes.trans_history', page = page - 1) }}">&lt</a></li>
     {% endif %}
 
-    {% if page_count > 2 %}
+    {% if page_count == 1 %}
+    <li class="page-item"><a class="page-link" href="{{ url_for('routes.trans_history', page = page) }}">{{ page }}</a></li>
+    {% elif page_count >= 2 %}
     {% for num in range(page_count) %}
     <li class="page-item"><a class="page-link" href="{{ url_for('routes.trans_history', page =  num + 1) }}">{{ num + 1 }}</a></li>
     {% endfor %}
-    {% elif page_count > 2 %}
-    <li class="page-item"><a class="page-link" href="{{ url_for('routes.trans_history', page = page) }}">{{ page - 1 }}</a></li>
-    <li class="page-item"><a class="page-link" href="{{ url_for('routes.trans_history', page = page + 1) }}">{{ page - 2 }}</a></li>
-    <li class="page-item"><a class="page-link" href="{{ url_for('routes.trans_history', page = page + 2) }}">{{ page }}</a></li>
-    <li class="page-item"><a class="page-link" href="{{ url_for('routes.trans_history', page = page + 1) }}">{{ page + 1 }}</a></li>
-    <li class="page-item"><a class="page-link" href="{{ url_for('routes.trans_history', page = page + 2) }}">{{ page + 2 }}</a></li>
-    {% else %}
-    <li class="page-item"><a class="page-link" href="{{ url_for('routes.trans_history', page = 1) }}">1</a></li>
-    <li class="page-item"><a class="page-link" href="{{ url_for('routes.trans_history', page = 2) }}">2</a></li>
-    <li class="page-item"><a class="page-link" href="{{ url_for('routes.trans_history', page = 3) }}">3</a></li>
-    <li class="page-item"><a class="page-link" href="{{ url_for('routes.trans_history', page = 4) }}">4</a></li>
-    <li class="page-item"><a class="page-link" href="{{ url_for('routes.trans_history', page = 5) }}">5</a></li>
     {% endif %}
 
     {% if page_count > page %}

@@ -13,6 +13,7 @@ routes = Blueprint('routes', __name__)
 # logged_in = False # Used to check if user is logged in. Change to "True" to access pages without logging in
 # current_user = User() # User class to temporarily store the logged in user info
 current_hours = MarketHours() # Define current_hours here so it can be used globally for a function
+s_transactions = []
 
 # Routes
 @routes.route("/dashboard")
@@ -121,7 +122,7 @@ def buy(ticker):
             record_transaction(ticker, volume_form.stock_amount.data, float(price), current_user)
 
             db.session.commit()
-            flash(str(volume_form.stock_amount.data) + " " + ticker + " successfully purchased for $" + price + ".")
+            flash(str(volume_form.stock_amount.data) + " " + ticker + " successfully purchased for $" + price + ".;green")
             return redirect(url_for('routes.portfolio'))
         else: 
             flash('Transaction failed due to insufficient balance.;red')
@@ -342,6 +343,10 @@ def market():
 @routes.route("/transaction_history/<int:page>", methods=["GET", "POST"]) 
 @login_required
 def trans_history(page):
+    global s_transactions
+    form = SearchForm()
+
+    # Code for displaying all transactions
     transactions = Transactions.query.\
         join(Stock, Transactions.stock_ticker == Stock.stock_ticker).\
         filter(Transactions.id == current_user.id).\
@@ -350,16 +355,42 @@ def trans_history(page):
         all()
     transactions.reverse()
 
-    if len(transactions) < 10:
-        page_count = 1
-    else:
-        page_count = len(transactions) // 10
+    page_count, page_transactions = paginate(transactions, page)
 
-    page_transactions = transactions[(page-1)*10:page*10]
+    # If a search is made
+    if form.validate_on_submit():
+        s_transactions = []
 
-    return render_template(
-        'trans_history.html',
-        transactions = page_transactions,
-        page = page,
-        page_count = page_count
-    )
+        for transaction in transactions:
+            if (form.search.data.lower() in transaction.stock_ticker.lower()) or (form.search.data.lower() in transaction.company_name.lower()):
+                s_transactions.append(transaction)
+
+        page_count, page_transactions = paginate(s_transactions, page)
+        
+        return render_template(
+            'trans_history.html',
+            transactions = page_transactions,
+            page = page,
+            page_count = page_count,
+            form = form
+        )
+
+    try:
+        s_transactions[0]
+        page_count, page_transactions = paginate(s_transactions, page)
+
+        return render_template(
+            'trans_history.html',
+            transactions = page_transactions,
+            page = page,
+            page_count = page_count,
+            form = form
+        )
+    except IndexError:
+        return render_template(
+            'trans_history.html',
+            transactions = page_transactions,
+            page = page,
+            page_count = page_count,
+            form = form
+        )

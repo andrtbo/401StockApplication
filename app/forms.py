@@ -26,7 +26,7 @@ class StockForm(FlaskForm): #Form to add the stock to DB
     submit = SubmitField('Submit')
 
 class SearchForm(FlaskForm):
-    search = StringField('Search', validators=[DataRequired()])
+    search = StringField('Search')
     submit = SubmitField('Search')
 
 class AddFundsForm(FlaskForm): #Form to add funds to account
