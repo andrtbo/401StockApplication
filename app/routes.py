@@ -34,7 +34,7 @@ def login():
         try:
             # Checks if the form password matches the attempted account's password
             if check_password_hash(login_account.password, form.password.data):
-                flash('Login successful')
+                flash('Login successful.;green')
                 
                 # Sets the user as logged in and modifies the "current_user" object
                 login_user(login_account)
@@ -42,15 +42,16 @@ def login():
                 #current_user = User.query.filter_by(username = form.username.data).first()
                 return redirect(url_for('routes.portfolio'))
             else: 
-                flash('The username or password is incorrect.')
+                flash('The username or password is incorrect.;red')
         except AttributeError: # Flashes this message when an incorrect password causes an AttributeError
-            flash('The username or password is incorrect.')
+            flash('The username or password is incorrect.;red')
 
     return render_template('login.html', form=form)
 
 @routes.route("/logout")
 def logout():
     logout_user()
+    flash('Logout successful.;green')
     return redirect(url_for('routes.login'))
 
 @routes.route("/create-account", methods=["GET", "POST"])
@@ -75,7 +76,7 @@ def create_account():
             # Puts the new user into the database
             db.session.add(new_user)
             db.session.commit()
-            flash('Account created successfully!')
+            flash('Account created successfully!;green')
             return redirect(url_for('routes.login'))
     
     return render_template('create_account.html', form=form)
@@ -97,7 +98,7 @@ def buy(ticker):
     modify_stock = OwnedStock.query.filter_by(id = current_user.id).filter_by(stock_ticker = ticker).first()
 
     if volume_form.validate_on_submit() and (check_hours(current_hours) == False):
-        flash('Transactions unavailable outside of market hours.')
+        flash('Transactions unavailable outside of market hours.;red')
         return redirect(url_for('routes.portfolio'))
     elif volume_form.validate_on_submit():
         price = "{:.2f}".format(volume_form.stock_amount.data * stock.market_price)
@@ -123,7 +124,7 @@ def buy(ticker):
             flash(str(volume_form.stock_amount.data) + " " + ticker + " successfully purchased for $" + price + ".")
             return redirect(url_for('routes.portfolio'))
         else: 
-            flash('Transaction failed due to insufficient balance.')
+            flash('Transaction failed due to insufficient balance.;red')
 
             try:
                 volume_owned = modify_stock.volume_owned + 0
@@ -168,7 +169,7 @@ def sell(ticker):
         modify_stock = OwnedStock(volume_owned = 0)
 
     if volume_form.validate_on_submit() and (check_hours(current_hours) == False):
-        flash('Transactions unavailable outside of market hours.')
+        flash('Transactions unavailable outside of market hours.;red')
         return redirect(url_for('routes.portfolio'))
     elif volume_form.validate_on_submit():
         price = "{:.2f}".format(volume_form.stock_amount.data  * stock.market_price)
@@ -184,10 +185,10 @@ def sell(ticker):
             record_transaction(ticker, -volume_form.stock_amount.data, float(price), current_user)
 
             db.session.commit()
-            flash(str(volume_form.stock_amount.data) + " " + ticker + " successfully sold for $" + price + ".")
+            flash(str(volume_form.stock_amount.data) + " " + ticker + " successfully sold for $" + price + ".;green")
             return redirect(url_for('routes.portfolio'))
         else: 
-            flash('Transaction failed due to insufficient shares.')
+            flash('Transaction failed due to insufficient shares.;red')
             return render_template(
                 'sell_page.html',
                 ticker = ticker,
@@ -247,7 +248,7 @@ def create_stock():
         if uniqueness == True:
             db.session.add(new_stock)
             db.session.commit()
-            flash("Stock has successfully been added.")
+            flash("Stock has successfully been added.;green")
             return redirect(url_for('routes.create_stock'))
 
     return render_template('create_stock.html', form=form)
@@ -262,10 +263,10 @@ def add_funds():
         modify_user.balance = modify_user.balance + form.deposit_amount.data
         db.session.commit()
 
-        flash('Funds Added Successfully!')
+        flash('Funds Added Successfully!;green')
         return redirect(url_for('routes.portfolio'))
     elif form.validate_on_submit() and form.deposit_amount.data <= 0:
-        flash('Deposit amount cannot be negative or zero.')
+        flash('Deposit amount cannot be negative or zero.;green')
 
     return render_template(
         'add_funds.html',
@@ -279,16 +280,16 @@ def with_funds():
     form = WithFundsForm()
 
     if form.validate_on_submit() and form.withdraw_amount.data <= 0:
-        flash('Withdrawal amount cannot be negative or zero.')
+        flash('Withdrawal amount cannot be negative or zero.;red')
     elif form.validate_on_submit() and current_user.balance >= form.withdraw_amount.data:  #Adjust later to fulfill database needs
         modify_user = User.query.filter_by(id = current_user.id).first()
         modify_user.balance = modify_user.balance - form.withdraw_amount.data
         db.session.commit()
 
-        flash('Funds Withdrawn Successfully!')
+        flash('Funds Withdrawn Successfully!;green')
         return redirect(url_for('routes.portfolio'))
     elif form.validate_on_submit() and current_user.balance < form.withdraw_amount.data:
-        flash('Insufficient balance.')
+        flash('Insufficient balance.;red')
         return render_template(
             'with_funds.html',
             balance = current_user.balance,
@@ -322,10 +323,10 @@ def market():
 
         # Validates that the start time is before the end time
         if time_conv(start_time) > time_conv(end_time):
-            flash('Start time cannot be after end time.')
+            flash('Start time cannot be after end time.;red')
             return render_template('market.html', form=form, current_hours=current_hours)
         else:
-            flash('Market hours updated successfully.')
+            flash('Market hours updated successfully.;green')
 
         # Store the new times/days in the database
         current_hours.start_time = start_time

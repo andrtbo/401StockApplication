@@ -82,7 +82,8 @@
             {% with messages = get_flashed_messages() %}
             {% if messages %}
                 {% for message in messages %}
-                <li class="list-group-item" style="color: green;">{{ message }}</li>
+                {% set msg = message.split(';') %}
+                <li class="list-group-item" style='color: {{ msg[1] }};'>{{ msg[0] }}</li>
                 {% endfor %}
             {% endif %}
             {% endwith %}
