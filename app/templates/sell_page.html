@@ -25,7 +25,7 @@
                 Sell {{ ticker }}
             </div>
             <div class="card-body">
-                <form method="POST" id="volume_form">
+                <form method="POST" id="volume_form" onkeydown="if(event.keyCode === 13) { modal_button.click(); return false }">
                     {{ volume_form.hidden_tag() }}
                     <!-- Stock input -->
                     <p>
@@ -48,11 +48,11 @@
                     }
                 </script>   
 
-                <button data-bs-toggle="modal" onclick="get_volume()" data-bs-target="#transaction">
+                <button data-bs-toggle="modal" id="modal_button" onclick="get_volume()" data-bs-target="#transaction">
                     Submit
                 </button>
                 
-                <div class="modal fade" id="transaction" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal fade" id="transaction" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" onkeydown="if(event.keyCode === 13) { volume_form.submit() }">
                     <div class="modal-dialog">
                       <div class="modal-content">
                         <div class="modal-header">

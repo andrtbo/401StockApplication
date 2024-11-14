@@ -31,7 +31,7 @@
     </div>
     <!-- Card content -->
     <div class="card-body">
-    <form method="POST" action="" id="submit_form">
+    <form method="POST" action="" id="submit_form" onkeydown="if(event.keyCode === 13) { modal_button.click(); return false }">
         {{ form.hidden_tag() }}
         <!-- Withdraw Amount field for form -->
         <p>
@@ -55,11 +55,11 @@
 
     </script>
 
-    <button data-bs-toggle="modal" onclick="get_volume()" data-bs-target="#transaction">
+    <button data-bs-toggle="modal" id="modal_button" onclick="get_volume()" data-bs-target="#transaction">
         Withdraw Funds
     </button>
     
-    <div class="modal fade" id="transaction" tabindex="-1" aria-hidden="true">
+    <div class="modal fade" id="transaction" tabindex="-1" aria-hidden="true" onkeydown="if(event.keyCode === 13) { submit_form.submit() }">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
