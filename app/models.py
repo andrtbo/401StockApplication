@@ -1,7 +1,8 @@
 from .extensions import db
+from flask_login import UserMixin
 
-class User(db.Model):
-    user_id = db.Column(db.Integer, primary_key=True)
+class User(UserMixin, db.Model):
+    id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(255), unique = True, nullable = False)
     first_name = db.Column(db.String(20))
     last_name = db.Column(db.String(20))
@@ -18,20 +19,20 @@ class Stock(db.Model):
 
 class OwnedStock(db.Model):
     inventory_id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey(User.user_id))
+    id = db.Column(db.Integer, db.ForeignKey(User.id))
     stock_ticker = db.Column(db.String(5), db.ForeignKey(Stock.stock_ticker))
     volume_owned = db.Column(db.Integer)
 
 class Portfolio(db.Model):
     portfolio_id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey(User.user_id))
+    id = db.Column(db.Integer, db.ForeignKey(User.id))
     stock_ticker = db.Column(db.String(5), db.ForeignKey(Stock.stock_ticker))
     total_balance = db.Column(db.Float)
     cash_balance = db.Column(db.Float)  
 
 class Transactions(db.Model):
     transaction_id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey(User.user_id))
+    id = db.Column(db.Integer, db.ForeignKey(User.id))
     stock_ticker = db.Column(db.String(5), db.ForeignKey(Stock.stock_ticker))
     purchase_price = db.Column(db.Float)
     purchase_volume = db.Column(db.Integer)

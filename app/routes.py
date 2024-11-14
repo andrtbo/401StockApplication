@@ -1,4 +1,6 @@
 from flask import Flask, render_template, redirect, url_for, flash, Blueprint
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import login_user, login_required, current_user, logout_user
 from .extensions import db
 from .models import *
 from .forms import *
@@ -8,25 +10,20 @@ import datetime
 routes = Blueprint('routes', __name__)
 
 # Variables 
-logged_in = False # Used to check if user is logged in. Change to "True" to access pages without logging in
-current_user = User() # User class to temporarily store the logged in user info
+# logged_in = False # Used to check if user is logged in. Change to "True" to access pages without logging in
+# current_user = User() # User class to temporarily store the logged in user info
 current_hours = MarketHours() # Define current_hours here so it can be used globally for a function
 
 # Routes
 @routes.route("/dashboard")
+@login_required
 def dashboard():
-    global logged_in # Makes sure all functions are accessing/editing the same "logged_in" variable
+    return render_template('dashboard.html')
 
-    if not logged_in: # I'd rather a function than using an if else for everything, but the redirect works weirdly otherwise
-        flash('Please log in before accessing stock trading services.')
-        return redirect(url_for('routes.login'))
-    else:
-        return render_template('dashboard.html')
-
-@routes.route("/", methods=["GET", "POST"])
+@routes.route("/", methods=["GET", "POST"]) # Login
 def login():
     global current_user
-    global logged_in
+    
     form = LoginForm()
 
     # What gets done when the current user submits
@@ -36,12 +33,13 @@ def login():
         
         try:
             # Checks if the form password matches the attempted account's password
-            if login_account.password == form.password.data:
+            if check_password_hash(login_account.password, form.password.data):
                 flash('Login successful')
                 
                 # Sets the user as logged in and modifies the "current_user" object
-                logged_in = True
-                current_user = User.query.filter_by(username = form.username.data).first()
+                login_user(login_account)
+                #logged_in = True
+                #current_user = User.query.filter_by(username = form.username.data).first()
                 return redirect(url_for('routes.portfolio'))
             else: 
                 flash('The username or password is incorrect.')
@@ -52,18 +50,12 @@ def login():
 
 @routes.route("/logout")
 def logout():
-    global logged_in
-    global current_user
-
-    # Sets the logged_in variable to false and makes the current_user variable blank
-    logged_in = False
-    current_user = User()
-
+    logout_user()
     return redirect(url_for('routes.login'))
 
 @routes.route("/create-account", methods=["GET", "POST"])
 def create_account():
-    global logged_in
+    
     form = CreateForm()
 
     if form.validate_on_submit():
@@ -73,7 +65,7 @@ def create_account():
             first_name = form.first_name.data,
             last_name = form.last_name.data,
             email = form.email.data,
-            password = form.password.data,
+            password = generate_password_hash(form.password.data, method='scrypt', salt_length=16),
             balance = 0,
             admin = False)
         
@@ -89,26 +81,20 @@ def create_account():
     return render_template('create_account.html', form=form)
 
 @routes.route("/stocks", methods=["GET", "POST"]) 
+@login_required
 def stocks():
-    global logged_in
-
-    # Return to the login page if not logged in
-    if not logged_in:
-        flash('Please log in before accessing stock trading services.')
-        return redirect(url_for('routes.login'))
-    else:
-        form = SearchForm()
-
-        return render_template('stocks.html', form=form)
+    form = SearchForm()
+    return render_template('stocks.html', form=form)
     
 @routes.route("/buy/<string:ticker>", methods=["GET", "POST"])
+@login_required
 def buy(ticker):
     update_stock()
 
     volume_form = TransactionForm()
     stock = Stock.query.filter_by(stock_ticker = ticker).first()
     current_hours = MarketHours.query.first() 
-    modify_stock = OwnedStock.query.filter_by(user_id = current_user.user_id).filter_by(stock_ticker = ticker).first()
+    modify_stock = OwnedStock.query.filter_by(id = current_user.id).filter_by(stock_ticker = ticker).first()
 
     if volume_form.validate_on_submit() and (check_hours(current_hours) == False):
         flash('Transactions unavailable outside of market hours.')
@@ -121,13 +107,13 @@ def buy(ticker):
                 modify_stock.volume_owned = modify_stock.volume_owned + volume_form.stock_amount.data
             except AttributeError:
                 modify_stock = OwnedStock(
-                    user_id = current_user.user_id,
+                    id = current_user.id,
                     stock_ticker = ticker,
                     volume_owned = volume_form.stock_amount.data
                 )
                 db.session.add(modify_stock)
 
-            modify_user = User.query.filter_by(user_id = current_user.user_id).first()
+            modify_user = User.query.filter_by(id = current_user.id).first()
             modify_user.balance = modify_user.balance - float(price)
             stock.market_volume = stock.market_volume + volume_form.stock_amount.data
             
@@ -138,13 +124,19 @@ def buy(ticker):
             return redirect(url_for('routes.portfolio'))
         else: 
             flash('Transaction failed due to insufficient balance.')
+
+            try:
+                volume_owned = modify_stock.volume_owned + 0
+            except AttributeError:
+                volume_owned = 0
+
             return render_template(
                 'buy_page.html',
                 ticker = ticker,
                 volume_form = volume_form,
                 stock = stock,
                 balance = current_user.balance,
-                volume_owned = modify_stock.volume_owned
+                volume_owned = volume_owned
             )
 
     try:
@@ -162,13 +154,14 @@ def buy(ticker):
     )
 
 @routes.route("/sell/<string:ticker>", methods=["GET", "POST"]) # Same notes from /buy apply
+@login_required
 def sell(ticker):
     update_stock()
 
     volume_form = TransactionForm()
     stock = Stock.query.filter_by(stock_ticker = ticker).first()
     current_hours = MarketHours.query.first() 
-    modify_stock = OwnedStock.query.filter_by(user_id = current_user.user_id).filter_by(stock_ticker = ticker).first()
+    modify_stock = OwnedStock.query.filter_by(id = current_user.id).filter_by(stock_ticker = ticker).first()
     try:
         modify_stock.volume_owned = modify_stock.volume_owned + 0
     except AttributeError:
@@ -181,10 +174,10 @@ def sell(ticker):
         price = "{:.2f}".format(volume_form.stock_amount.data  * stock.market_price)
  
         if modify_stock.volume_owned >= volume_form.stock_amount.data:
-            modify_stock = OwnedStock.query.filter_by(user_id = current_user.user_id).filter_by(stock_ticker = ticker).first()
+            modify_stock = OwnedStock.query.filter_by(id = current_user.id).filter_by(stock_ticker = ticker).first()
             modify_stock.volume_owned = modify_stock.volume_owned - volume_form.stock_amount.data
 
-            modify_user = User.query.filter_by(user_id = current_user.user_id).first()
+            modify_user = User.query.filter_by(id = current_user.id).first()
             modify_user.balance = modify_user.balance + float(price)
             stock.market_volume = stock.market_volume - volume_form.stock_amount.data
 
@@ -219,38 +212,25 @@ def sell(ticker):
     )
 
 @routes.route("/portfolio")
+@login_required
 def portfolio():
-    global logged_in
-    global current_user
-
     update_stock()
 
-    current_user = User.query.filter_by(user_id = current_user.user_id).first()
     portfolio = OwnedStock.query.\
         join(Stock, OwnedStock.stock_ticker == Stock.stock_ticker).\
-        filter(OwnedStock.user_id == current_user.user_id).\
+        filter(OwnedStock.id == current_user.id).\
         add_columns(OwnedStock.stock_ticker, Stock.company_name, OwnedStock.volume_owned, Stock.market_price, Stock.market_volume).\
         order_by(OwnedStock.volume_owned).\
         all()
 
-    # Return to the login page if not logged in
-    if not logged_in:
-        flash('Please log in before accessing stock trading services.')
-        return redirect(url_for('routes.login'))
-    else:
-        return render_template(
-            'portfolio.html',
-            balance = current_user.balance,
-            portfolio = portfolio
-        )
-
-@routes.route("/load-db")
-def load_db():    
-    db.create_all()
-    flash('DB Created')
-    return render_template('dashboard.html')
+    return render_template(
+        'portfolio.html',
+        balance = current_user.balance,
+        portfolio = portfolio
+    )
 
 @routes.route("/create_stock", methods=["GET", "POST"])
+@login_required
 def create_stock():
     form = StockForm()
 
@@ -273,11 +253,12 @@ def create_stock():
     return render_template('create_stock.html', form=form)
 
 @routes.route("/add_funds", methods=["GET", "POST"])
+@login_required
 def add_funds():
     form = AddFundsForm()
 
     if form.validate_on_submit():  #Adjust later to fulfill database needs
-        modify_user = User.query.filter_by(user_id = current_user.user_id).first()
+        modify_user = User.query.filter_by(id = current_user.id).first()
         modify_user.balance = modify_user.balance + form.deposit_amount.data
         db.session.commit()
 
@@ -291,11 +272,12 @@ def add_funds():
     )
 
 @routes.route("/with_funds", methods=["GET", "POST"])
+@login_required
 def with_funds():
     form = WithFundsForm()
 
     if form.validate_on_submit() and current_user.balance >= form.withdraw_amount.data:  #Adjust later to fulfill database needs
-        modify_user = User.query.filter_by(user_id = current_user.user_id).first()
+        modify_user = User.query.filter_by(id = current_user.id).first()
         modify_user.balance = modify_user.balance - form.withdraw_amount.data
         db.session.commit()
 
@@ -316,6 +298,7 @@ def with_funds():
     )
 
 @routes.route("/market", methods=["GET", "POST"])
+@login_required
 def market():
     global current_hours
     current_hours = MarketHours.query.first() # There's only one time in the market_hours table so this is fine
@@ -352,10 +335,11 @@ def market():
     return render_template('market.html', form=form, current_hours=current_hours)
 
 @routes.route("/transaction_history/<int:page>", methods=["GET", "POST"]) 
+@login_required
 def trans_history(page):
     transactions = Transactions.query.\
         join(Stock, Transactions.stock_ticker == Stock.stock_ticker).\
-        filter(Transactions.user_id == current_user.user_id).\
+        filter(Transactions.id == current_user.id).\
         add_columns(Transactions.transaction_id, Transactions.stock_ticker, Transactions.purchase_price, Transactions.purchase_volume, Transactions.transaction_time, Stock.company_name).\
         order_by(Transactions.transaction_id).\
         all()

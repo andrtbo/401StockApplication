@@ -38,7 +38,7 @@ def record_transaction(ticker, volume, price, current_user):
     timestamp = datetime.now().strftime("%m/%d/%Y %I:%M %p")
 
     new_transaction = Transactions(
-        user_id = current_user.user_id,
+        id = current_user.id,
         stock_ticker = ticker,
         purchase_price = price,
         purchase_volume = volume,
