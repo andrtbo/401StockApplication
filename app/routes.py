@@ -257,13 +257,15 @@ def create_stock():
 def add_funds():
     form = AddFundsForm()
 
-    if form.validate_on_submit():  #Adjust later to fulfill database needs
+    if form.validate_on_submit() and form.deposit_amount.data > 0:  #Adjust later to fulfill database needs
         modify_user = User.query.filter_by(id = current_user.id).first()
         modify_user.balance = modify_user.balance + form.deposit_amount.data
         db.session.commit()
 
         flash('Funds Added Successfully!')
         return redirect(url_for('routes.portfolio'))
+    elif form.validate_on_submit() and form.deposit_amount.data <= 0:
+        flash('Deposit amount cannot be negative or zero.')
 
     return render_template(
         'add_funds.html',
@@ -276,21 +278,23 @@ def add_funds():
 def with_funds():
     form = WithFundsForm()
 
-    if form.validate_on_submit() and current_user.balance >= form.withdraw_amount.data:  #Adjust later to fulfill database needs
+    if form.validate_on_submit() and form.withdraw_amount.data <= 0:
+        flash('Withdrawal amount cannot be negative or zero.')
+    elif form.validate_on_submit() and current_user.balance >= form.withdraw_amount.data:  #Adjust later to fulfill database needs
         modify_user = User.query.filter_by(id = current_user.id).first()
         modify_user.balance = modify_user.balance - form.withdraw_amount.data
         db.session.commit()
 
         flash('Funds Withdrawn Successfully!')
         return redirect(url_for('routes.portfolio'))
-    elif form.validate_on_submit():
+    elif form.validate_on_submit() and current_user.balance < form.withdraw_amount.data:
         flash('Insufficient balance.')
         return render_template(
             'with_funds.html',
             balance = current_user.balance,
             form = form
         )
-
+    
     return render_template(
         'with_funds.html',
         balance = current_user.balance,

@@ -35,7 +35,7 @@
         {{ form.hidden_tag() }}
         <!-- Withdraw Amount field for form -->
         <p>
-            Current balance: ${{ balance }}<br>
+            Current balance: ${{ '%0.2f'| format(balance | float) }}<br>
             {{ form.withdraw_amount.label }}<br>
             {{ form.withdraw_amount(id="dep_amt") }}<br>
     
@@ -50,7 +50,7 @@
 
         function get_volume() {
             var deposit = document.getElementById('dep_amt').value;
-            document.getElementById("amount_display").innerHTML = deposit;
+            document.getElementById("amount_display").innerHTML = (deposit * 1).toFixed(2);
         }
 
     </script>

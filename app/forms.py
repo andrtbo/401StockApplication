@@ -30,11 +30,11 @@ class SearchForm(FlaskForm):
     submit = SubmitField('Search')
 
 class AddFundsForm(FlaskForm): #Form to add funds to account
-    deposit_amount = IntegerField('Deposit Amount', validators=[DataRequired()])
+    deposit_amount = FloatField('Deposit Amount', validators=[DataRequired()])
     submit = SubmitField('Add Funds')
 
 class WithFundsForm(FlaskForm): #Form to withdrawal funds from account
-    withdraw_amount = IntegerField('Withdraw Amount', validators=[DataRequired()])
+    withdraw_amount = FloatField('Withdraw Amount', validators=[DataRequired()])
     submit = SubmitField('Withdraw Funds')
 
 class MarketForm(FlaskForm): #Form to set market hours for application
