@@ -153,6 +153,17 @@ def daily_highlow(stock):
     except ValueError:
         return opening_price, stock.market_price, stock.market_price
 
+def update_daily():
+    stocks = Stock.query.all()
+    for stock in stocks:
+        try:
+            stock.opening_price = stock.opening_price + 0
+        except TypeError:
+            stock.opening_price = stock.market_price
+
+        stock.opening_price, stock.daily_low, stock.daily_high = daily_highlow(stock)
+    db.session.commit()
+
 def paginate(transactions, page):
     if len(transactions) < 10:
         page_count = 1

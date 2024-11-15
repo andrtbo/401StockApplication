@@ -19,14 +19,17 @@
     </nav>
 
     <!-- Table for holding the stock data -->
-    <table class="table table-hover">
+    <table class="table table-hover table-bordered">
         <!-- Table headings -->
         <thead>
             <tr>
                 <th scope="col" class="text-center">Ticker</th>
                 <th scope="col" class="text-center">Company</th>
-                <th scope="col" class="text-center">Volume Owned</th>
+                <th scope="col" class="text-center">Opening Price</th>
+                <th scope="col" class="text-center">Daily Low</th>
+                <th scope="col" class="text-center">Daily High</th>
                 <th scope="col" class="text-center">Stock Price</th>
+                <th scope="col" class="text-center">Volume Owned</th>
                 <th scope="col" class="text-center">Market Volume</th>
                 <th scope="col" class="text-center">Market Cap</th>
                 <th scope="col" class="text-center"></th>
@@ -38,8 +41,15 @@
         <tbody class="table-group-divider">
             <td class="text-center my-auto align-middle">{{ stock.stock_ticker }}</th>
             <td class="text-center align-middle">{{ stock.company_name }}</th>
-            <td class="text-center align-middle">{{ stock.volume_owned }}</th>
+            <td class="text-center align-middle">${{ '%0.2f'| format(stock.opening_price | float) }}</th>
+            <td class="text-center align-middle">${{ '%0.2f'| format(stock.daily_low | float) }}</th>
+            <td class="text-center align-middle">${{ '%0.2f'| format(stock.daily_high | float) }}</th>
             <td class="text-center align-middle">${{ '%0.2f'| format(stock.market_price | float) }}</th>
+            {% if stock.volume_owned %}
+            <td class="text-center align-middle">{{ stock.volume_owned }}</th>
+            {% else %}
+            <td class="text-center align-middle">0</th>
+            {% endif %}
             <td class="text-center align-middle">{{ stock.market_volume }}</th>
             <td class="text-center align-middle">${{ '%0.2f'| format(stock.market_volume * stock.market_price | float) }}</th>
             <td class="text-center align-middle">
@@ -182,6 +192,27 @@
             </th>
         </tbody>-->
     </table>
+
+<!-- Pagination abomination -->
+<ul class="pagination fixed-bottom justify-content-center">
+    {% if page > 1%}
+    <li class="page-item"><a class="page-link" href="{{ url_for('routes.stocks', page = 1) }}">&lt&lt</a></li>
+    <li class="page-item"><a class="page-link" href="{{ url_for('routes.stocks', page = page - 1) }}">&lt</a></li>
+    {% endif %}
+
+    {% if page_count == 1 %}
+    <li class="page-item"><a class="page-link" href="{{ url_for('routes.stocks', page = page) }}">{{ page }}</a></li>
+    {% elif page_count >= 2 %}
+    {% for num in range(page_count) %}
+    <li class="page-item"><a class="page-link" href="{{ url_for('routes.stocks', page =  num + 1) }}">{{ num + 1 }}</a></li>
+    {% endfor %}
+    {% endif %}
+
+    {% if page_count > page %}
+    <li class="page-item"><a class="page-link" href="{{ url_for('routes.stocks', page = page + 1) }}">&gt</a></li>
+    <li class="page-item"><a class="page-link" href="{{ url_for('routes.stocks', page = page + 1) }}">&gt&gt</a></li>
+    {% endif %}
+</ul>
 {% endblock %}
 
 {% block footer%}{% endblock %}

@@ -14,6 +14,7 @@ routes = Blueprint('routes', __name__)
 # current_user = User() # User class to temporarily store the logged in user info
 current_hours = MarketHours() # Define current_hours here so it can be used globally for a function
 s_transactions = []
+s_stocks = []
 
 # Routes
 @routes.route("/dashboard")
@@ -87,16 +88,56 @@ def create_account():
     
     return render_template('create_account.html', form=form)
 
-@routes.route("/stocks", methods=["GET", "POST"]) 
+@routes.route("/stocks/<int:page>", methods=["GET", "POST"]) 
 @login_required
-def stocks():
+def stocks(page):
+    update_daily()
+    global s_stocks
+    form = SearchForm()
+
     stock = Stock.query.\
         join(OwnedStock, Stock.stock_ticker == OwnedStock.stock_ticker, isouter=True).\
-        add_columns(Stock.market_price, Stock.market_volume, OwnedStock.volume_owned, Stock.stock_ticker, Stock.company_name).\
+        add_columns(Stock.market_price, Stock.opening_price, Stock.daily_low, Stock.daily_high, Stock.market_volume, OwnedStock.volume_owned, Stock.stock_ticker, Stock.company_name).\
         all()
 
-    form = SearchForm()
-    return render_template('stocks.html', form=form, stock=stock)
+    page_count, page_stock = paginate(stock, page)
+
+    if form.validate_on_submit():
+        s_stocks = []
+
+        for stock in stock:
+            if (form.search.data.lower() in stock.stock_ticker.lower()) or (form.search.data.lower() in stock.company_name.lower()):
+                s_stocks.append(stock)
+
+        page_count, page_stock = paginate(s_stocks, page)
+        
+        return render_template(
+            'stocks.html',
+            stock = page_stock,
+            page = page,
+            page_count = page_count,
+            form = form
+        )
+
+    try:
+        s_stocks[0]
+        page_count, page_stock = paginate(s_stocks, page)
+
+        return render_template(
+            'stocks.html',
+            stock = page_stock,
+            page = page,
+            page_count = page_count,
+            form = form
+        )
+    except IndexError:
+        return render_template(
+            'stocks.html',
+            stock = page_stock,
+            page = page,
+            page_count = page_count,
+            form = form
+        )
     
 @routes.route("/buy/<string:ticker>", methods=["GET", "POST"])
 @login_required
@@ -227,16 +268,7 @@ def sell(ticker):
 @login_required
 def portfolio():
     update_stock()
-
-    stocks = Stock.query.all()
-    for stock in stocks:
-        try:
-            stock.opening_price = stock.opening_price + 0
-        except TypeError:
-            stock.opening_price = stock.market_price
-
-        stock.opening_price, stock.daily_low, stock.daily_high = daily_highlow(stock)
-    db.session.commit()
+    update_daily()
 
     portfolio = OwnedStock.query.\
         join(Stock, OwnedStock.stock_ticker == Stock.stock_ticker).\

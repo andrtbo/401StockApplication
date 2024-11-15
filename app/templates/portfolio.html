@@ -52,8 +52,8 @@
             <th scope="col" class="text-center">Opening Price</th>
             <th scope="col" class="text-center">Daily Low</th>
             <th scope="col" class="text-center">Daily High</th>
-            <th scope="col" class="text-center">Volume Owned</th>
             <th scope="col" class="text-center">Stock Price</th>
+            <th scope="col" class="text-center">Volume Owned</th>
             <th scope="col" class="text-center">Owned Value</th>
             <th scope="col" class="text-center">Market Volume</th>
             <th scope="col" class="text-center">Market Cap</th>
@@ -67,11 +67,11 @@
     <tbody class="table-group-divider">
         <td class="text-center my-auto align-middle">{{ stock.stock_ticker }}</th>
         <td class="text-center align-middle">{{ stock.company_name }}</th>
-        <td class="text-center align-middle">${{ stock.opening_price }}</th>
-        <td class="text-center align-middle">${{ stock.daily_low }}</th>
-        <td class="text-center align-middle">${{ stock.daily_high }}</th>
-        <td class="text-center align-middle">{{ stock.volume_owned }}</th>
+        <td class="text-center align-middle">${{ '%0.2f'| format(stock.opening_price | float) }}</th>
+        <td class="text-center align-middle">${{ '%0.2f'| format(stock.daily_low | float) }}</th>
+        <td class="text-center align-middle">${{ '%0.2f'| format(stock.daily_high | float) }}</th>
         <td class="text-center align-middle">${{ '%0.2f'| format(stock.market_price | float) }}</th>
+        <td class="text-center align-middle">{{ stock.volume_owned }}</th>
         <td class="text-center align-middle">${{ '%0.2f'| format(stock.volume_owned * stock.market_price | float) }}</th>
         <td class="text-center align-middle">{{ stock.market_volume }}</th>
         <td class="text-center align-middle">${{ '%0.2f'| format(stock.market_volume * stock.market_price | float) }}</th>
