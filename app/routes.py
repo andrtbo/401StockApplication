@@ -228,15 +228,30 @@ def sell(ticker):
 def portfolio():
     update_stock()
 
+    stocks = Stock.query.all()
+    for stock in stocks:
+        try:
+            stock.opening_price = stock.opening_price + 0
+        except TypeError:
+            stock.opening_price = stock.market_price
+
+        stock.opening_price, stock.daily_low, stock.daily_high = daily_highlow(stock)
+    db.session.commit()
+
     portfolio = OwnedStock.query.\
         join(Stock, OwnedStock.stock_ticker == Stock.stock_ticker).\
         filter(OwnedStock.id == current_user.id).\
-        add_columns(OwnedStock.stock_ticker, Stock.company_name, OwnedStock.volume_owned, Stock.market_price, Stock.market_volume).\
+        add_columns(OwnedStock.stock_ticker, Stock.opening_price, Stock.daily_low, Stock.daily_high, Stock.company_name, OwnedStock.volume_owned, Stock.market_price, Stock.market_volume).\
         order_by(OwnedStock.volume_owned).\
         all()
 
+    portfolio_value = 0
+    for stock in portfolio:
+        portfolio_value += (stock.volume_owned * stock.market_price)
+
     return render_template(
         'portfolio.html',
+        portfolio_value = portfolio_value,
         balance = current_user.balance,
         portfolio = portfolio
     )

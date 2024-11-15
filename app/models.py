@@ -13,6 +13,9 @@ class User(UserMixin, db.Model):
 
 class Stock(db.Model):
     stock_ticker = db.Column(db.String(5), primary_key=True)
+    opening_price = db.Column(db.Float)
+    daily_low = db.Column(db.Float)
+    daily_high = db.Column(db.Float)
     company_name = db.Column(db.String(255))
     market_price = db.Column(db.Float, nullable = False)
     market_volume = db.Column(db.Integer)
@@ -46,3 +49,9 @@ class MarketHours(db.Model):
 
 class LastUpdated(db.Model):
     time = db.Column(db.String(50), primary_key=True)
+
+class StockHistory(db.Model):
+    update_id = db.Column(db.Integer, primary_key=True)
+    stock_ticker = db.Column(db.String(5), db.ForeignKey(Stock.stock_ticker))
+    price = db.Column(db.Float)
+    time = db.Column(db.String(50))

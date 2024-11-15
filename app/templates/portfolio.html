@@ -24,10 +24,10 @@
         color: blue;
     }
 </style>
-<h1>Stock Value: $415.40</h1>
-<h2>Current Balance: ${{ '%0.2f'| format(balance|float) }}</h2>
+<h1>Portfolio Value: ${{ '%0.2f'| format(portfolio_value | float) }}</h1>
+<h2>Current Balance: ${{ '%0.2f'| format(balance | float) }}</h2>
 
-<div class="card mx-auto" style="width: 50rem;">
+<div class="card mx-auto" style="width: 80rem;">
     <!-- Card nav tabs-->
     <div class="card-header">
         <ul class="nav nav-pills card-header-pills w-100 justify-content-around">
@@ -43,13 +43,15 @@
         </ul>
     </div>
 <!-- Table for holding the stock data -->
-<table class="table table-hover">
+<table class="table table-hover table-bordered">
     <!-- Table headings -->
     <thead>
         <tr>
             <th scope="col" class="text-center">Ticker</th>
             <th scope="col" class="text-center">Company</th>
-            <th scope="col" class="text-center">Today's Change</th>
+            <th scope="col" class="text-center">Opening Price</th>
+            <th scope="col" class="text-center">Daily Low</th>
+            <th scope="col" class="text-center">Daily High</th>
             <th scope="col" class="text-center">Volume Owned</th>
             <th scope="col" class="text-center">Stock Price</th>
             <th scope="col" class="text-center">Owned Value</th>
@@ -59,12 +61,15 @@
             <th scope="col" class="text-center"></th>
         </tr>
     </thead>
+
     {% for stock in portfolio %}
     {% if stock.volume_owned > 0 %}
     <tbody class="table-group-divider">
         <td class="text-center my-auto align-middle">{{ stock.stock_ticker }}</th>
         <td class="text-center align-middle">{{ stock.company_name }}</th>
-        <td class="text-center align-middle">0</th>
+        <td class="text-center align-middle">${{ stock.opening_price }}</th>
+        <td class="text-center align-middle">${{ stock.daily_low }}</th>
+        <td class="text-center align-middle">${{ stock.daily_high }}</th>
         <td class="text-center align-middle">{{ stock.volume_owned }}</th>
         <td class="text-center align-middle">${{ '%0.2f'| format(stock.market_price | float) }}</th>
         <td class="text-center align-middle">${{ '%0.2f'| format(stock.volume_owned * stock.market_price | float) }}</th>

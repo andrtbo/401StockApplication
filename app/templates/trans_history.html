@@ -48,9 +48,9 @@
         <td class="text-center align-middle">{{ transaction.company_name }}</th>
         <td class="text-center align-middle">{{ transaction.purchase_volume }}</th>
         {% if transaction.purchase_volume > 0 %}
-            <td class="text-center align-middle">-${{ '%0.2f'| format(transaction.purchase_price|float) }}</th>
+            <td class="text-center align-middle">-${{ '%0.2f'| format(transaction.purchase_price | float) }}</th>
         {% else %}
-            <td class="text-center align-middle">+${{ transaction.purchase_price }}</th>  
+            <td class="text-center align-middle">+${{ '%0.2f'| format(transaction.purchase_price | float) }}</th>  
         {% endif %}
         <td class="text-center align-middle">{{ transaction.transaction_time }}</th>
     </tbody>

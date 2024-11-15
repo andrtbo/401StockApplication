@@ -118,9 +118,40 @@ def update_stock():
         for stock in stocks:
             flux = random.uniform(-0.05, 0.05)
             stock.market_price = float("{:.2f}".format(stock.market_price * (1 + flux)))
-
             last_updated.time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+            stock_update = StockHistory(
+                stock_ticker = stock.stock_ticker,
+                price = stock.market_price,
+                time = last_updated.time
+            )
+            db.session.add(stock_update)
+
             db.session.commit()
+
+def daily_highlow(stock):
+    valid_updates = []
+    
+    try:
+        opening_price = stock.opening_price + 0
+    except TypeError:
+        opening_price = stock.market_price
+
+    stock_history = StockHistory.query.filter_by(stock_ticker = stock.stock_ticker).all()
+    for update in stock_history:
+        time = datetime.strptime(update.time, '%Y-%m-%d %H:%M:%S')
+        current_time = datetime.now()
+        delta = current_time - time
+        if delta.total_seconds() > 24*3600:
+            opening_price = update.price
+            break
+        else:
+            valid_updates.append(update.price)
+
+    try:
+        return opening_price, min(valid_updates), max(valid_updates)
+    except ValueError:
+        return opening_price, stock.market_price, stock.market_price
 
 def paginate(transactions, page):
     if len(transactions) < 10:
