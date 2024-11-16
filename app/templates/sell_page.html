@@ -19,8 +19,7 @@
         <h4>${{ '%0.2f'| format(stock.market_price | float) }} per share</h4>
         <h4>Current balance: ${{ '%0.2f'| format(balance|float) }}</h4>
         <h4>Volume owned: {{ volume_owned }}</h4>
-    </div>
-    <div class="col">
+
         <div class="card">
             <div class="card-header text-center">
                 Sell {{ ticker }}
@@ -71,6 +70,77 @@
                 </div>
             </div>
         </div>
+    </div>
+    <div class="col"> <!-- Graph column -->
+        <!-- Graph -->
+        <div class="chart-container">
+            <canvas id="lineGraph"></canvas>
+        </div>
+        
+        <canvas id="tt"></canvas>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.2/moment.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-adapter-moment/1.0.0/chartjs-adapter-moment.min.js"></script>
+
+        <style>
+            .chart-container {
+                position: relative;
+                margin: auto;
+                width: 100%;
+            }
+        </style>
+
+        <script>
+            var ticker = '{{ stock.stock_ticker | tojson }}'
+            var next_hour = '{{ next_hr | tojson }}'
+            var graph_labels = '{{ chart_labels | tojson }}'
+            var graph_data = '{{ chart_data | tojson }}'
+            var label_array = (graph_labels.substring(1, graph_labels.length-1)).split(',').map(Number)
+            var graph_array = (graph_data.substring(1, graph_data.length-1)).split(',').map(Number)
+            const update_data = []
+            
+            for (let i = 0; i < label_array.length; i++){
+                update_data.push({x: label_array[i], y: graph_array[i]})
+            }
+
+            const options = {
+            type: 'line',
+            data: {
+                datasets: [{
+                label: ticker + ' stock price',
+                data: update_data,
+                pointRadius: 2,
+                }]
+            },
+            options: {
+                scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: ''
+                    },
+                    type: 'time',
+                    time: {
+                        unit: 'hour',
+                        displayFormats: {
+                            hour: 'h:mm a',
+                        },
+                    },
+                    min: (next_hour-12*3600)*1000,
+                    max: next_hour*1000,
+                }
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                    }
+                }
+            }
+            }
+
+            const ctx = document.getElementById('lineGraph').getContext('2d');
+            new Chart(ctx, options);
+        </script>
     </div>
 </div>
 {% endblock %}

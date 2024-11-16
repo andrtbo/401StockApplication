@@ -14,7 +14,7 @@
         {% if messages %}
             {% for message in messages %}
             {% set msg = message.split(';') %}
-            <li class="list-group-item" style='color: {{ msg[1] }};'>{{ msg[1] }}</li>
+            <li class="list-group-item" style='color: {{ msg[1] }};'>{{ msg[0] }}</li>
             {% endfor %}
         {% endif %}
         {% endwith %}

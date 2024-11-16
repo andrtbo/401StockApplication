@@ -6,6 +6,7 @@ from .models import *
 from .forms import *
 from .functions import *
 import datetime
+from datetime import datetime
 
 routes = Blueprint('routes', __name__)
 
@@ -148,6 +149,9 @@ def buy(ticker):
     stock = Stock.query.filter_by(stock_ticker = ticker).first()
     current_hours = MarketHours.query.first() 
     modify_stock = OwnedStock.query.filter_by(id = current_user.id).filter_by(stock_ticker = ticker).first()
+    
+    next_hr = int(next_hour())
+    chart_labels, chart_data = graph_data(stock)
 
     if volume_form.validate_on_submit() and (check_hours(current_hours) == False):
         flash('Transactions unavailable outside of market hours.;red')
@@ -189,7 +193,10 @@ def buy(ticker):
                 volume_form = volume_form,
                 stock = stock,
                 balance = current_user.balance,
-                volume_owned = volume_owned
+                volume_owned = volume_owned,
+                next_hr = next_hr,
+                chart_labels = chart_labels,
+                chart_data = chart_data[0]
             )
 
     try:
@@ -203,7 +210,10 @@ def buy(ticker):
         volume_form = volume_form,
         stock = stock,
         balance = current_user.balance,
-        volume_owned = volume_owned
+        volume_owned = volume_owned,
+        next_hr = next_hr,
+        chart_labels = chart_labels,
+        chart_data = chart_data
     )
 
 @routes.route("/sell/<string:ticker>", methods=["GET", "POST"]) # Same notes from /buy apply
@@ -215,6 +225,10 @@ def sell(ticker):
     stock = Stock.query.filter_by(stock_ticker = ticker).first()
     current_hours = MarketHours.query.first() 
     modify_stock = OwnedStock.query.filter_by(id = current_user.id).filter_by(stock_ticker = ticker).first()
+
+    next_hr = int(next_hour())
+    chart_labels, chart_data = graph_data(stock)
+
     try:
         modify_stock.volume_owned = modify_stock.volume_owned + 0
     except AttributeError:
@@ -247,7 +261,10 @@ def sell(ticker):
                 volume_form = volume_form,
                 stock = stock,
                 balance = current_user.balance,
-                volume_owned = modify_stock.volume_owned
+                volume_owned = modify_stock.volume_owned,
+                next_hr = next_hr,
+                chart_labels = chart_labels,
+                chart_data = chart_data
             )
 
     try:
@@ -261,7 +278,10 @@ def sell(ticker):
         volume_form=volume_form,
         stock = stock,
         balance = current_user.balance,
-        volume_owned = volume_owned
+        volume_owned = volume_owned,
+        next_hr = next_hr,
+        chart_labels = chart_labels,
+        chart_data = chart_data
     )
 
 @routes.route("/portfolio")

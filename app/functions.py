@@ -138,13 +138,14 @@ def daily_highlow(stock):
         opening_price = stock.market_price
 
     stock_history = StockHistory.query.filter_by(stock_ticker = stock.stock_ticker).all()
+    stock_history.reverse()
     for update in stock_history:
         time = datetime.strptime(update.time, '%Y-%m-%d %H:%M:%S')
         current_time = datetime.now()
         delta = current_time - time
         if delta.total_seconds() > 24*3600:
             opening_price = update.price
-            break
+            return opening_price, min(valid_updates), max(valid_updates)
         else:
             valid_updates.append(update.price)
 
@@ -163,6 +164,30 @@ def update_daily():
 
         stock.opening_price, stock.daily_low, stock.daily_high = daily_highlow(stock)
     db.session.commit()
+
+def next_hour():
+    this_hour = datetime.now().strftime("%m/%d/%Y %H:") + "00:00"
+    format_hour = datetime.strptime(this_hour, '%m/%d/%Y %H:%M:%S')
+    unix_hour = format_hour.timestamp()
+    return unix_hour + 3600
+
+def graph_data(stock):
+    history = StockHistory.query.filter_by(stock_ticker = stock.stock_ticker).all()
+    history.reverse()
+    graph_labels =[]
+    graph_data = []
+
+    for update in history:
+        time = datetime.strptime(update.time, '%Y-%m-%d %H:%M:%S')
+        current_time = datetime.now()
+        delta = current_time - time
+        if delta.total_seconds() > 24*3600:
+            return graph_labels, graph_data
+        else:
+            graph_labels.append(int(time.timestamp())*1000)
+            graph_data.append(update.price)
+
+    return graph_labels, graph_data
 
 def paginate(transactions, page):
     if len(transactions) < 10:

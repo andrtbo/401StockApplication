@@ -14,76 +14,76 @@
 
 <style>
     h1{
-        text-align: center;
         font-size: large;
         color: blue;
     }
     h2{
-        text-align: center;
         font-size: large;
         color: blue;
     }
 </style>
-<h1>Portfolio Value: ${{ '%0.2f'| format(portfolio_value | float) }}</h1>
-<h2>Current Balance: ${{ '%0.2f'| format(balance | float) }}</h2>
 
 <div class="card mx-auto" style="width: 80rem;">
     <!-- Card nav tabs-->
     <div class="card-header">
-        <ul class="nav nav-pills card-header-pills w-100 justify-content-around">
-            <li class="nav-item">
+        <h1>Portfolio Value: ${{ '%0.2f'| format(portfolio_value | float) }}</h1>
+        <h2>Current Balance: ${{ '%0.2f'| format(balance | float) }}</h2>
+        <ul class="nav nav-pills card-header-pills w-100 flex-row">
+            <li class="nav-item p-2">
                 <a class="nav-link active" href="{{ url_for('routes.add_funds') }}">Add Funds</a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item p-2">
                 <a class="nav-link active" href="{{ url_for('routes.with_funds') }}">Withdraw Funds</a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item p-2">
                 <a class="nav-link active" href="{{ url_for('routes.trans_history', page = 1) }}">Transaction History</a>
             </li>
         </ul>
     </div>
-<!-- Table for holding the stock data -->
-<table class="table table-hover table-bordered">
-    <!-- Table headings -->
-    <thead>
-        <tr>
-            <th scope="col" class="text-center">Ticker</th>
-            <th scope="col" class="text-center">Company</th>
-            <th scope="col" class="text-center">Opening Price</th>
-            <th scope="col" class="text-center">Daily Low</th>
-            <th scope="col" class="text-center">Daily High</th>
-            <th scope="col" class="text-center">Stock Price</th>
-            <th scope="col" class="text-center">Volume Owned</th>
-            <th scope="col" class="text-center">Owned Value</th>
-            <th scope="col" class="text-center">Market Volume</th>
-            <th scope="col" class="text-center">Market Cap</th>
-            <th scope="col" class="text-center"></th>
-            <th scope="col" class="text-center"></th>
-        </tr>
-    </thead>
+    <!-- Table for holding the stock data -->
+    <table class="table table-hover table-bordered">
+        <!-- Table headings -->
+        <thead>
+            <tr>
+                <th scope="col" class="text-center">Ticker</th>
+                <th scope="col" class="text-center">Company</th>
+                <th scope="col" class="text-center">Opening Price</th>
+                <th scope="col" class="text-center">Daily Low</th>
+                <th scope="col" class="text-center">Daily High</th>
+                <th scope="col" class="text-center">Stock Price</th>
+                <th scope="col" class="text-center">Volume Owned</th>
+                <th scope="col" class="text-center">Owned Value</th>
+                <th scope="col" class="text-center">Market Volume</th>
+                <th scope="col" class="text-center">Market Cap</th>
+                <th scope="col" class="text-center"></th>
+                <th scope="col" class="text-center"></th>
+            </tr>
+        </thead>
 
-    {% for stock in portfolio %}
-    {% if stock.volume_owned > 0 %}
-    <tbody class="table-group-divider">
-        <td class="text-center my-auto align-middle">{{ stock.stock_ticker }}</th>
-        <td class="text-center align-middle">{{ stock.company_name }}</th>
-        <td class="text-center align-middle">${{ '%0.2f'| format(stock.opening_price | float) }}</th>
-        <td class="text-center align-middle">${{ '%0.2f'| format(stock.daily_low | float) }}</th>
-        <td class="text-center align-middle">${{ '%0.2f'| format(stock.daily_high | float) }}</th>
-        <td class="text-center align-middle">${{ '%0.2f'| format(stock.market_price | float) }}</th>
-        <td class="text-center align-middle">{{ stock.volume_owned }}</th>
-        <td class="text-center align-middle">${{ '%0.2f'| format(stock.volume_owned * stock.market_price | float) }}</th>
-        <td class="text-center align-middle">{{ stock.market_volume }}</th>
-        <td class="text-center align-middle">${{ '%0.2f'| format(stock.market_volume * stock.market_price | float) }}</th>
-        <td class="text-center align-middle">
-            <a class="btn btn-secondary" role="button" href="{{ url_for('routes.buy', ticker = stock.stock_ticker) }}">Buy</button>
-        </th>
-        <td class="text-center align-middle">
-            <a class="btn btn-secondary" role="button" href="{{ url_for('routes.sell', ticker = stock.stock_ticker) }}">Sell</button>
-        </th>
-    </tbody>
-    {% endif %}
-    {% endfor %}
+        {% for stock in portfolio %}
+        {% if stock.volume_owned > 0 %}
+        <tbody class="table-group-divider">
+            <td class="text-center my-auto align-middle">{{ stock.stock_ticker }}</th>
+            <td class="text-center align-middle">{{ stock.company_name }}</th>
+            <td class="text-center align-middle">${{ '%0.2f'| format(stock.opening_price | float) }}</th>
+            <td class="text-center align-middle">${{ '%0.2f'| format(stock.daily_low | float) }}</th>
+            <td class="text-center align-middle">${{ '%0.2f'| format(stock.daily_high | float) }}</th>
+            <td class="text-center align-middle">${{ '%0.2f'| format(stock.market_price | float) }}</th>
+            <td class="text-center align-middle">{{ stock.volume_owned }}</th>
+            <td class="text-center align-middle">${{ '%0.2f'| format(stock.volume_owned * stock.market_price | float) }}</th>
+            <td class="text-center align-middle">{{ stock.market_volume }}</th>
+            <td class="text-center align-middle">${{ '%0.2f'| format(stock.market_volume * stock.market_price | float) }}</th>
+            <td class="text-center align-middle">
+                <a class="btn btn-secondary" role="button" href="{{ url_for('routes.buy', ticker = stock.stock_ticker) }}">Buy</button>
+            </th>
+            <td class="text-center align-middle">
+                <a class="btn btn-secondary" role="button" href="{{ url_for('routes.sell', ticker = stock.stock_ticker) }}">Sell</button>
+            </th>
+        </tbody>
+        {% endif %}
+        {% endfor %}
+    </table>
+</div>
 {% endblock %}
 
 {% block footer%}{% endblock %}
