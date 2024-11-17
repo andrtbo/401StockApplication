@@ -7,6 +7,8 @@ from .forms import *
 from .functions import *
 import datetime
 from datetime import datetime
+import sqlalchemy
+
 
 routes = Blueprint('routes', __name__)
 
@@ -96,10 +98,18 @@ def stocks(page):
     global s_stocks
     form = SearchForm()
 
-    stock = Stock.query.\
-        join(OwnedStock, Stock.stock_ticker == OwnedStock.stock_ticker, isouter=True).\
-        add_columns(Stock.market_price, Stock.opening_price, Stock.daily_low, Stock.daily_high, Stock.market_volume, OwnedStock.volume_owned, Stock.stock_ticker, Stock.company_name).\
+    Owned = OwnedStock.query.filter(OwnedStock.id == current_user.id).subquery()
+    stock = db.session.query(Owned).\
+        select_from(Stock).\
+        join(Owned, Stock.stock_ticker == Owned.c.stock_ticker, isouter=True).\
+        add_columns(Stock.market_price, Stock.opening_price, Stock.daily_low, Stock.daily_high, Stock.market_volume, Owned.c.volume_owned, Stock.stock_ticker, Stock.company_name).\
         all()
+    
+    # stock = OwnedStock.query.\
+    #     select_from(Stock).\
+    #     join(OwnedStock, Stock.stock_ticker == OwnedStock.stock_ticker, isouter=True).\
+    #     add_columns(Stock.market_price, Stock.opening_price, Stock.daily_low, Stock.daily_high, Stock.market_volume, OwnedStock.volume_owned, Stock.stock_ticker, Stock.company_name).\
+    #     all()
 
     page_count, page_stock = paginate(stock, page)
 
