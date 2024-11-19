@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, flash, Blueprint
+from flask import Flask, render_template, redirect, url_for, flash, Blueprint, abort
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, login_required, current_user, logout_user
 from .extensions import db
@@ -23,11 +23,17 @@ s_stocks = []
 @routes.route("/dashboard")
 @login_required
 def dashboard():
-    
+    if admin_check(current_user) == False:
+        abort(403)
+
     stock = Stock.query.\
         all()
 
-    return render_template('dashboard.html',stock=stock)
+    return render_template(
+        'dashboard.html',
+        stock = stock,
+        admin = admin_check(current_user),
+    )
 
 
 @routes.route("/", methods=["GET", "POST"]) # Login
@@ -56,7 +62,10 @@ def login():
         except AttributeError: # Flashes this message when an incorrect password causes an AttributeError
             flash('The username or password is incorrect.;red')
 
-    return render_template('login.html', form=form)
+    return render_template(
+        'login.html',
+        admin = admin_check(current_user),
+        form = form)
 
 @routes.route("/logout")
 def logout():
@@ -127,6 +136,7 @@ def stocks(page):
             stock = page_stock,
             page = page,
             page_count = page_count,
+            admin = admin_check(current_user),
             form = form
         )
 
@@ -139,6 +149,7 @@ def stocks(page):
             stock = page_stock,
             page = page,
             page_count = page_count,
+            admin = admin_check(current_user),
             form = form
         )
     except IndexError:
@@ -147,6 +158,7 @@ def stocks(page):
             stock = page_stock,
             page = page,
             page_count = page_count,
+            admin = admin_check(current_user),
             form = form
         )
     
@@ -206,7 +218,8 @@ def buy(ticker):
                 volume_owned = volume_owned,
                 next_hr = next_hr,
                 chart_labels = chart_labels,
-                chart_data = chart_data[0]
+                admin = admin_check(current_user),
+                chart_data = chart_data
             )
 
     try:
@@ -223,6 +236,7 @@ def buy(ticker):
         volume_owned = volume_owned,
         next_hr = next_hr,
         chart_labels = chart_labels,
+        admin = admin_check(current_user),
         chart_data = chart_data
     )
 
@@ -274,6 +288,7 @@ def sell(ticker):
                 volume_owned = modify_stock.volume_owned,
                 next_hr = next_hr,
                 chart_labels = chart_labels,
+                admin = admin_check(current_user),
                 chart_data = chart_data
             )
 
@@ -291,6 +306,7 @@ def sell(ticker):
         volume_owned = volume_owned,
         next_hr = next_hr,
         chart_labels = chart_labels,
+        admin = admin_check(current_user),
         chart_data = chart_data
     )
 
@@ -315,6 +331,7 @@ def portfolio():
         'portfolio.html',
         portfolio_value = portfolio_value,
         balance = current_user.balance,
+        admin = admin_check(current_user),
         portfolio = portfolio
     )
 
@@ -340,7 +357,11 @@ def create_stock():
             flash("Stock has successfully been added.;green")
             return redirect(url_for('routes.create_stock'))
 
-    return render_template('create_stock.html', form=form)
+    return render_template(
+        'create_stock.html',
+        form = form,
+        admin = admin_check(current_user),
+    )
 
 @routes.route("/add_funds", methods=["GET", "POST"])
 @login_required
@@ -360,6 +381,7 @@ def add_funds():
     return render_template(
         'add_funds.html',
         balance = current_user.balance,
+        admin = admin_check(current_user),
         form=form
     )
 
@@ -382,12 +404,14 @@ def with_funds():
         return render_template(
             'with_funds.html',
             balance = current_user.balance,
+            admin = admin_check(current_user),
             form = form
         )
     
     return render_template(
         'with_funds.html',
         balance = current_user.balance,
+        admin = admin_check(current_user),
         form = form
     )
 
@@ -424,9 +448,19 @@ def market():
         current_hours.end_day = form.end_day.data
         db.session.commit()
 
-        return render_template('market.html', form=form, current_hours=current_hours)
+        return render_template(
+            'market.html',
+            form = form,
+            current_hours=current_hours,
+            admin = admin_check(current_user),
+        )
     
-    return render_template('market.html', form=form, current_hours=current_hours)
+    return render_template(
+        'market.html',
+        form = form,
+        current_hours = current_hours,
+        admin = admin_check(current_user),
+    )
 
 @routes.route("/transaction_history/<int:page>", methods=["GET", "POST"]) 
 @login_required
@@ -460,6 +494,7 @@ def trans_history(page):
             transactions = page_transactions,
             page = page,
             page_count = page_count,
+            admin = admin_check(current_user),
             form = form
         )
 
@@ -472,6 +507,7 @@ def trans_history(page):
             transactions = page_transactions,
             page = page,
             page_count = page_count,
+            admin = admin_check(current_user),
             form = form
         )
     except IndexError:
@@ -480,5 +516,6 @@ def trans_history(page):
             transactions = page_transactions,
             page = page,
             page_count = page_count,
+            admin = admin_check(current_user),
             form = form
         )

@@ -199,3 +199,11 @@ def paginate(transactions, page):
     
     return page_count, page_transactions
 
+def admin_check(current_user):
+    try:
+        if current_user.admin == True:
+            return True
+        else:
+            return False
+    except AttributeError:
+        return False
